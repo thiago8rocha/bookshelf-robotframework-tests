@@ -1,11 +1,40 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
-*.log
-output.xml
-report.html
-log.html
-reports/
-.env
+*.pyd
+*.so
+
+# Virtual environments
 .venv/
+venv/
+env/
+
+# Robot Framework outputs
+output.xml
+log.html
+report.html
+*.log
+reports/
+results/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+
+# Node (caso use algo no frontend auxiliar)
 node_modules/
+
+# Playwright cache (caso use junto no futuro)
+playwright-report/
+test-results/
