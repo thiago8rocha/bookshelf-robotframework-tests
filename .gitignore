@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.log
+output.xml
+report.html
+log.html
+reports/
+.env
+.venv/
+node_modules/
