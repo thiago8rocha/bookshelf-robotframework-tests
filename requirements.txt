@@ -1,4 +1,9 @@
-robotframework
-robotframework-browser
-robotframework-requests
-allure-robotframework
+# Core
+robotframework==7.0
+robotframework-browser==18.0.0
+robotframework-requests==0.9.6
+robotframework-faker==5.0.0
+
+# Reporting
+allure-robotframework==2.13.2
+robotframework-pabot==2.18.0

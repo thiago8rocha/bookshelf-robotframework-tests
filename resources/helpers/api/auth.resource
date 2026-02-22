@@ -2,10 +2,8 @@
 Documentation    Keywords de autenticação para testes de API
 ...              Gerencia criação de usuários, login e tokens
 
-Library     RequestsLibrary
-Library     Collections
-
 Resource    ../../../environment.resource
+Resource    ../../../base/api.resource
 Resource    ../common/data.resource
 
 *** Variables ***
@@ -17,7 +15,6 @@ ${TEST_USER_PASS}   test123456
 
 Create Test User And Get Token
     [Documentation]    Cria um novo usuário de teste e retorna o token
-    ...                Ideal para usar no Suite Setup de testes que precisam autenticação
     
     ${email}=    Generate Random Email
     Set Suite Variable    ${TEST_USER_EMAIL}    ${email}
@@ -35,8 +32,8 @@ Create Test User And Get Token
     ${token}=    Set Variable    ${resp.json()['token']}
     Set Suite Variable    ${AUTH_TOKEN}    ${token}
     
-    Log To Console    ${\n}✅ Test user created: ${email}
-    Log To Console    🔑 Token obtained: ${token[:30]}...
+    Log To Console    ${\n}Test user created: ${email}
+    Log To Console    Token obtained: ${token[:30]}...
     
     RETURN    ${token}
 

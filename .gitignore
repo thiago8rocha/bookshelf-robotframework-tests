@@ -1,40 +1,81 @@
-# Python
+# ==========================================
+# PYTHON
+# ==========================================
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Cache
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 *.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
 
-# Virtual environments
-.venv/
-venv/
-env/
-
-# Robot Framework outputs
+# ==========================================
+# ROBOT FRAMEWORK
+# ==========================================
+# Outputs
 output.xml
 log.html
 report.html
+interactive_console_output.xml
 *.log
-reports/
-results/
 
+# Results
+results/
+pabot_results/
+.pabotsuitenames
+
+# ==========================================
+# PLAYWRIGHT & BROWSER LIBRARY
+# ==========================================
+playwright-report/
+test-results/
+browser/
+screenshots/
+videos/
+traces/
+
+# ==========================================
+# ALLURE
+# ==========================================
+allure-report/
+allure-results/
+
+# ==========================================
 # IDEs
+# ==========================================
 .vscode/
+.cursor/
 .idea/
 *.swp
 *.swo
+*~
 
+# ==========================================
 # OS
+# ==========================================
 .DS_Store
 Thumbs.db
+Desktop.ini
 
-# Environment files
+# ==========================================
+# ENVIRONMENT
+# ==========================================
 .env
+.env.local
 .env.*
 
-# Node (caso use algo no frontend auxiliar)
+# ==========================================
+# NODE (se necessário)
+# ==========================================
 node_modules/
-
-# Playwright cache (caso use junto no futuro)
-playwright-report/
-test-results/
+package-lock.json

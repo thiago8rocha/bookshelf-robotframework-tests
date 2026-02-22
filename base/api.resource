@@ -1,10 +1,10 @@
 *** Settings ***
 Documentation    Setup base para testes de API
-...              Apenas cria sessão HTTP, autenticação está em helpers/api/
 
 Library     RequestsLibrary
 Library     Collections
 Library     DateTime
+Library     String
 
 Resource    ../environment.resource
 Resource    ../resources/helpers/api/auth.resource
@@ -19,4 +19,4 @@ ${API_SESSION}    bookshelf_api
 Create API Session
     [Documentation]    Cria sessão HTTP com a API
     Create Session    ${API_SESSION}    ${API_URL}
-    Log To Console    ${\n}🌐 API Session created: ${API_URL}
+    Log To Console    ${\n}API Session created: ${API_URL}

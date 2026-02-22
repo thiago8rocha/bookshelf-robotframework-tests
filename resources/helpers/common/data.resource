@@ -1,77 +1,48 @@
 *** Settings ***
-Documentation    Keywords de dados compartilhadas entre API e UI
-...              Geração de dados aleatórios e fixtures
+Documentation    Keywords de geração de dados dinâmicos
 
-Library    OperatingSystem
-Library    Collections
+Resource   ../../../base/ui.resource
 
 *** Keywords ***
 
-# ==========================================
-# FIXTURES (JSON FILES)
-# ==========================================
-
-Load JSON Fixture
-    [Documentation]    Carrega dados de um arquivo JSON de fixture
-    [Arguments]    ${fixture_name}
-    ${json_string}=    Get File    ${CURDIR}/../../fixtures/${fixture_name}.json
-    ${data}=    Evaluate    json.loads('''${json_string}''')    json
-    RETURN    ${data}
-
-Get Valid User
-    ${users}=    Load JSON Fixture    users
-    RETURN    ${users['valid_user']}
-
-Get Admin User
-    ${users}=    Load JSON Fixture    users
-    RETURN    ${users['admin_user']}
-
-Get Invalid Users
-    ${users}=    Load JSON Fixture    users
-    RETURN    ${users['invalid_users']}
-
-Get Valid Book
-    [Arguments]    ${index}=0
-    ${books}=    Load JSON Fixture    books
-    ${book}=    Get From List    ${books['valid_books']}    ${index}
-    RETURN    ${book}
-
-Get All Valid Books
-    ${books}=    Load JSON Fixture    books
-    RETURN    ${books['valid_books']}
-
-Get Invalid Book
-    [Arguments]    ${index}=0
-    ${books}=    Load JSON Fixture    books
-    ${book}=    Get From List    ${books['invalid_books']}    ${index}
-    RETURN    ${book}
-
-# ==========================================
-# RANDOM DATA GENERATION
-# ==========================================
-
 Generate Random Email
-    [Documentation]    Gera email aleatório usando timestamp
+    [Documentation]    Gera email único
     ${timestamp}=    Get Time    epoch
-    ${email}=    Set Variable    test${timestamp}@test.com
+    ${random}=    Evaluate    random.randint(100000, 999999)    modules=random
+    ${email}=    Set Variable    test${timestamp}${random}@test.com
     RETURN    ${email}
 
-Generate Random Book Title
-    [Documentation]    Gera título de livro aleatório
-    ${timestamp}=    Get Time    epoch
-    ${title}=    Set Variable    Test Book ${timestamp}
-    RETURN    ${title}
+Generate New Book
+    [Documentation]    Gera um livro com todos os dados aleatorios
 
-Generate Random String
-    [Documentation]    Gera string aleatória
-    [Arguments]    ${length}=10
-    ${timestamp}=    Get Time    epoch
-    ${random}=    Set Variable    ${timestamp}
-    RETURN    ${random}
+    # Title
+    ${title_size}=    FakerLibrary.Random Int    min=1    max=5
+    ${words}=           FakerLibrary.Words         nb=${title_size}
+    ${title_raw}=       Evaluate    " ".join($words).title()
+    ${title}=           Replace String    ${title_raw}    .    ${EMPTY}
 
-Generate Random Number
-    [Documentation]    Gera número aleatório
-    [Arguments]    ${min}=1    ${max}=1000
-    ${timestamp}=    Get Time    epoch
-    ${number}=    Evaluate    int(${timestamp}) % (${max} - ${min}) + ${min}
-    RETURN    ${number}
+    # Year
+    ${current_year}=       Get Current Date    result_format=%Y
+    ${publishedYear}=   FakerLibrary.Random Int    min=1900    max=${current_year}
+    
+    # ISBN
+    ${isbn_raw}=            FakerLibrary.Isbn13
+    ${isbn}=            Replace String    ${isbn_raw}    -    ${EMPTY}
+    
+    ${author}=          FakerLibrary.Name
+    ${publisher}=       FakerLibrary.Company
+    ${pages}=           FakerLibrary.Random Int    min=50    max=1200
+    ${language}=        Set Variable    Portuguese
+    ${description}=     FakerLibrary.Text    max_nb_chars=500
+
+    ${Book}=     Create Dictionary    
+    ...    title=${title}    
+    ...    author=${author}    
+    ...    isbn=${isbn}    
+    ...    publisher=${publisher}    
+    ...    publishedYear=${publishedYear}    
+    ...    pages=${pages}    
+    ...    language=${language}    
+    ...    description=${description}
+
+    RETURN    ${Book}
