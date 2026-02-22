@@ -1,15 +1,14 @@
 *** Settings ***
 Documentation    Testes de API para autenticação de usuários
-...              Valida registro, login e tratamento de erros
 
-Resource    ../../base/api_base.resource
+Resource    ../../base/api.resource
 
 Suite Setup    Create API Session
 
 *** Test Cases ***
 
 Should Register New User Successfully
-    [Documentation]    Valida registro de novo usuário com dados válidos
+    [Documentation]    Valida registro de novo usuário
     [Tags]    positive    api    auth    ID=AUTH001
     
     ${email}=    Generate Random Email
@@ -60,7 +59,6 @@ Should Not Login With Invalid Password
 
 Should Not Register With Existing Email
     [Documentation]    Valida rejeição de email duplicado
-    ...                ✅ Corrigido: API retorna 409 Conflict (RFC 2616)
     [Tags]    negative    api    auth    ID=AUTH005
     
     ${body}=    Create Dictionary
@@ -72,9 +70,7 @@ Should Not Register With Existing Email
     Response Status Should Be    ${resp}    409
 
 Should Not Register With Invalid Email Format
-    [Documentation]    Valida validação de formato de email
-    ...                ⚠️ SKIP: API não valida formato no backend
-    ...                Validação deve ser feita no frontend
+    [Documentation]    API não valida formato no backend
     [Tags]    negative    api    auth    validation    skip    ID=AUTH006
     
     Skip    API não valida formato de email no backend - apenas frontend

@@ -1,15 +1,9 @@
 *** Settings ***
 Documentation    Keywords genéricas para requisições HTTP
-...              Suporta autenticação opcional via token
 
-Library     RequestsLibrary
-Library     Collections
+Resource    ../../../base/api.resource
 
 *** Keywords ***
-
-# ==========================================
-# HTTP METHODS (WITHOUT AUTH)
-# ==========================================
 
 GET Endpoint
     [Documentation]    Realiza requisição GET sem autenticação
@@ -34,10 +28,6 @@ DELETE Endpoint
     [Arguments]    ${endpoint}
     ${response}=    DELETE On Session    bookshelf_api    ${endpoint}    expected_status=any
     RETURN    ${response}
-
-# ==========================================
-# HTTP METHODS (WITH AUTH)
-# ==========================================
 
 GET Authenticated
     [Documentation]    Realiza requisição GET com token de autenticação
@@ -74,37 +64,25 @@ DELETE Authenticated
     ${response}=    DELETE On Session    bookshelf_api    ${endpoint}    headers=${headers}    expected_status=any
     RETURN    ${response}
 
-# ==========================================
-# VALIDATIONS
-# ==========================================
-
 Response Status Should Be
     [Documentation]    Valida o status code da resposta
     [Arguments]    ${response}    ${expected}
     Should Be Equal As Integers    ${response.status_code}    ${expected}
 
 Response Should Contain Key
-    [Documentation]    Valida que a resposta JSON contém uma chave (suporta nested keys)
+    [Documentation]    Valida que a resposta JSON contém uma chave
     [Arguments]    ${response}    ${key}
     
     ${json}=    Set Variable    ${response.json()}
-    
-    # Se a chave tiver ponto (ex: stats.total), fazer drill-down
-    ${has_dot}=    Run Keyword And Return Status    Should Contain    ${key}    .
-    
-    IF    ${has_dot}
-        ${keys}=    Split String    ${key}    .
-        FOR    ${k}    IN    @{keys}
-            ${json}=    Get From Dictionary    ${json}    ${k}
-        END
-    ELSE
-        Should Contain    ${json}    ${key}
-    END
+    Dictionary Should Contain Key    ${json}    ${key}
 
 Response Should Not Contain Key
     [Documentation]    Valida que a resposta JSON NÃO contém uma chave
     [Arguments]    ${response}    ${key}
-    Should Not Contain    ${response.json()}    ${key}
+    
+    ${json}=    Set Variable    ${response.json()}
+    ${has_key}=    Run Keyword And Return Status    Dictionary Should Contain Key    ${json}    ${key}
+    Should Not Be True    ${has_key}
 
 Response JSON Should Match
     [Documentation]    Valida estrutura completa da resposta JSON
