@@ -67,8 +67,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - .:/app
+    # Volume removido: o COPY . . do Dockerfile já inclui todos os arquivos.
+    # O bind mount sobrescrevia a imagem com versões locais desatualizadas no Windows.
     environment:
       - BROWSER=chromium
       - BASE_URL=http://frontend:5173
@@ -76,4 +76,19 @@ services:
     command: python -m robot -d results --listener allure_robotframework tests
     depends_on:
       frontend:
+        condition: service_healthy
+
+  k6:
+    image: grafana/k6:latest
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - API_URL=http://backend:3000
+    # Executado sob demanda via 'docker compose run --rm k6'
+    # O robot container chama o k6 internamente via process library
+    profiles:
+      - performance
+    depends_on:
+      backend:
         condition: service_healthy
