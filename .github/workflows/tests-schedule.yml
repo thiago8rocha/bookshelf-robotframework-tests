@@ -24,7 +24,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout
+      - name: 📥 Checkout Backend
+        uses: actions/checkout@v4
+        with:
+          repository: thiago8rocha/bookshelf-api
+          path: bookshelf-api
+
+      - name: 📥 Checkout Frontend
+        uses: actions/checkout@v4
+        with:
+          repository: thiago8rocha/bookshelf-frontend
+          path: bookshelf-frontend
+
+      - name: 📥 Checkout Robot Tests
         uses: actions/checkout@v4
         with:
           path: bookshelf-tests

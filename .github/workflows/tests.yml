@@ -22,11 +22,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout
+      - name: 📥 Checkout Backend
         uses: actions/checkout@v4
         with:
-          # Faz checkout do repositório inteiro incluindo submódulos/repos irmãos
-          # Ajuste o path conforme a estrutura do seu repositório
+          repository: thiago8rocha/bookshelf-api
+          path: bookshelf-api
+
+      - name: 📥 Checkout Frontend
+        uses: actions/checkout@v4
+        with:
+          repository: thiago8rocha/bookshelf-frontend
+          path: bookshelf-frontend
+
+      - name: 📥 Checkout Robot Tests
+        uses: actions/checkout@v4
+        with:
           path: bookshelf-tests
 
       - name: 🐳 Start Application via Docker Compose
@@ -35,14 +45,12 @@ jobs:
           docker compose -f docker-compose.ci.yml up -d --build database backend frontend
           echo "Aguardando serviços ficarem saudáveis..."
           docker compose -f docker-compose.ci.yml wait backend frontend || true
-          # Espera extra para garantir que tudo está pronto
           sleep 10
 
       - name: 🧪 Run Tests
         working-directory: bookshelf-tests
         run: |
           docker compose -f docker-compose.ci.yml run --rm robot
-        # Continua mesmo se os testes falharem para conseguir coletar os resultados
         continue-on-error: true
         id: run_tests
 
