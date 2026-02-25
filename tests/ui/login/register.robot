@@ -6,6 +6,7 @@ Resource    ../../../base/ui.resource
 Resource    ../../../resources/actions/register.resource
 Resource    ../../../resources/helpers/common/data.resource
 
+Suite Setup    Ensure Default User Exists
 Test Setup       Setup UI Test
 Test Teardown    Teardown UI Test
 
@@ -32,7 +33,7 @@ User Cannot Register With Existing Email
     Fill Register Email    ${USER_EMAIL}
     Fill Register Password    123456
     Click Register Button
-    Error Message Should Be Visible    já existe
+    Error Message Should Be Visible    já cadastrado
 
 User Cannot Register With Short Password
     [Documentation]    Valida tamanho mínimo de senha

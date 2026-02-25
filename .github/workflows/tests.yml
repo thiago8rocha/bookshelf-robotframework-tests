@@ -1,0 +1,86 @@
+name: 🤖 Robot Framework Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'tests/**'
+      - 'resources/**'
+      - 'base/**'
+      - '*.resource'
+      - '.github/workflows/tests.yml'
+  pull_request:
+    branches: [ main, develop ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-tests:
+    name: 🧪 Run All Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          # Faz checkout do repositório inteiro incluindo submódulos/repos irmãos
+          # Ajuste o path conforme a estrutura do seu repositório
+          path: bookshelf-tests
+
+      - name: 🐳 Start Application via Docker Compose
+        working-directory: bookshelf-tests
+        run: |
+          docker compose -f docker-compose.ci.yml up -d --build database backend frontend
+          echo "Aguardando serviços ficarem saudáveis..."
+          docker compose -f docker-compose.ci.yml wait backend frontend || true
+          # Espera extra para garantir que tudo está pronto
+          sleep 10
+
+      - name: 🧪 Run Tests
+        working-directory: bookshelf-tests
+        run: |
+          docker compose -f docker-compose.ci.yml run --rm robot
+        # Continua mesmo se os testes falharem para conseguir coletar os resultados
+        continue-on-error: true
+        id: run_tests
+
+      - name: 📊 Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ github.run_number }}
+          path: bookshelf-tests/results/
+          retention-days: 30
+
+      - name: 📈 Test Report Summary
+        if: always()
+        working-directory: bookshelf-tests
+        run: |
+          echo "## 🧪 Resultados dos Testes" >> $GITHUB_STEP_SUMMARY
+          if [ -f results/output.xml ]; then
+            python3 -c "
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('results/output.xml')
+          stats = tree.find('.//statistics/total/stat')
+          passed = stats.get('pass', '0')
+          failed = stats.get('fail', '0')
+          skipped = stats.get('skip', '0')
+          total = int(passed) + int(failed) + int(skipped)
+          print(f'| Total | Passou | Falhou | Pulou |')
+          print(f'|---|---|---|---|')
+          print(f'| {total} | ✅ {passed} | ❌ {failed} | ⏭️ {skipped} |')
+          " >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Arquivo de resultados não encontrado" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🧹 Cleanup
+        if: always()
+        working-directory: bookshelf-tests
+        run: docker compose -f docker-compose.ci.yml down -v
+
+      - name: ❌ Fail if tests failed
+        if: steps.run_tests.outcome == 'failure'
+        run: exit 1

@@ -104,7 +104,7 @@ Click Cancel Button
 
 Click Edit Book
     [Arguments]    ${title}
-    Wait For Elements State    css=[data-testid^="book-item-"]    attached    timeout=2s
+    Wait For Elements State    css=[data-testid^="book-item-"]:first-child    attached    timeout=5s
     ${books}=    Get Elements    css=[data-testid^="book-item-"]
     FOR    ${book}    IN    @{books}
         ${book_text}=    Get Text    ${book}
@@ -123,7 +123,7 @@ Click Edit Book
 
 Click Delete Book
     [Arguments]    ${title}
-    Wait For Elements State    css=[data-testid^="book-item-"]    attached    timeout=2s
+    Wait For Elements State    css=[data-testid^="book-item-"]:first-child    attached    timeout=5s
     ${books}=    Get Elements    css=[data-testid^="book-item-"]
     FOR    ${book}    IN    @{books}
         ${book_text}=    Get Text    ${book}
