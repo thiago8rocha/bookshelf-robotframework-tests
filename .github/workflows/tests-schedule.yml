@@ -46,8 +46,15 @@ jobs:
         run: |
           docker compose -f docker-compose.ci.yml up -d --build database backend frontend
           echo "Aguardando serviços ficarem saudáveis..."
-          docker compose -f docker-compose.ci.yml wait backend frontend || true
-          sleep 10
+          for i in $(seq 1 30); do
+            HEALTHY=$(docker compose -f docker-compose.ci.yml ps | grep -c "healthy" || true)
+            echo "⏳ Serviços saudáveis: $HEALTHY ($i/30)"
+            if [ "$HEALTHY" -ge 3 ]; then
+              echo "✅ Todos os serviços estão saudáveis"
+              break
+            fi
+            sleep 5
+          done
 
       - name: 🧪 Run Tests
         working-directory: bookshelf-tests

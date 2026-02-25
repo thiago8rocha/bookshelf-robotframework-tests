@@ -11,41 +11,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Baixa o repositório do BACKEND
       - name: Checkout Backend
         uses: actions/checkout@v4
         with:
-          repository: thiago8rocha/bookshelf-api # Substitua pelo caminho real
+          repository: thiago8rocha/bookshelf-api
           path: bookshelf-api
 
-      # 2. Baixa o repositório do FRONTEND
       - name: Checkout Frontend
         uses: actions/checkout@v4
         with:
-          repository: thiago8rocha/bookshelf-frontend # Substitua pelo caminho real
+          repository: thiago8rocha/bookshelf-frontend
           path: bookshelf-frontend
 
-      # 3. Baixa o repositório atual (dos TESTES)
       - name: Checkout Robot Tests
         uses: actions/checkout@v4
         with:
           path: bookshelf-robot
 
-      # 4. Executa o Ambiente e os Testes
       - name: Run CI Environment and Tests
         working-directory: ./bookshelf-robot
         run: |
-          docker-compose -f docker-compose.ci.yml up --build --exit-code-from robot --abort-on-container-exit
+          docker compose -f docker-compose.ci.yml up --build --exit-code-from robot --abort-on-container-exit
 
-      # --- Passos de Relatório (Allure) permanecem iguais ---
       - name: Install Allure CLI
         if: always()
         run: |
-          sudo apt-get update
-          sudo apt-get install -y default-jre
-          wget https://github.com/allure-framework/allure2/releases/latest/download/allure-2.29.0.tgz
-          tar -zxvf allure-2.29.0.tgz
-          sudo mv allure-2.29.0 /opt/allure
+          sudo apt-get update -q
+          sudo apt-get install -y -q default-jre
+          ALLURE_VERSION=2.29.0
+          wget -q "https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz"
+          tar -zxf allure-${ALLURE_VERSION}.tgz
+          sudo mv allure-${ALLURE_VERSION} /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
 
       - name: Generate Allure report
