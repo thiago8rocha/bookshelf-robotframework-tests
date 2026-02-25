@@ -5,9 +5,10 @@ Resource    ../../../base/ui.resource
 Resource    ../../../resources/actions/login.resource
 Resource    ../../../resources/actions/books.resource
 
+Suite Setup    Ensure Default User Exists
 Test Setup    Run Keywords
 ...    Setup UI Test
-...    Login As Valid User
+...    Login As Default User
 ...    Create New Book
 
 Test Teardown    Teardown UI Test
@@ -22,29 +23,29 @@ User Can Edit Book Title
     [Documentation]    Valida atualização do título
     [Tags]    positive    books    ui    regression    ID=BOOKS018
     
-    User Edits Book Title    ${book.title}    ${new_title}
+    User Edits Book Title    ${book}[title]    ${new_title}
     Book Should Exist In List                 ${new_title}
 
 User Can Edit Book Author
     [Documentation]    Valida atualização do autor
     [Tags]    positive    books    ui    regression    ID=BOOKS019
     
-    User Edits Book Author    ${book.title}    ${new_author}
-    Book Author Should Be     ${book.title}    ${new_author}
+    User Edits Book Author    ${book}[title]    ${new_author}
+    Book Author Should Be     ${book}[title]    ${new_author}
 
 User Can Edit All Book Fields
     [Documentation]    Valida a edição de todos os campos de um livro
     [Tags]    positive    books    ui    regression    ID=BOOKS020
     
-    ${updated_book}=    Create New Book
+    ${updated_book}=    Generate New Book
     
-    User Edits Complete Book    ${book.title}    ${updated_book}
-    Book Should Exist In List    Updated Title
+    User Edits Complete Book    ${book}[title]    ${updated_book}
+    Book Should Exist In List    ${updated_book}[title]
 User Cannot Save Edited Book With Empty Title
     [Documentation]    Valida o título ser obrigatório na edição
     [Tags]    negative    books    ui    validation    ID=BOOKS021
     
-    Click Edit Book    ${book.title}
+    Click Edit Book    ${book}[title]
     Clear Book Title
     
     ${has_required}=    Run Keyword And Return Status
@@ -55,7 +56,7 @@ User Cannot Save Edited Book With Empty Author
     [Documentation]    Valida o autor ser obrigatório na edição
     [Tags]    negative    books    ui    validation    ID=BOOKS022
     
-    Click Edit Book    ${book.title}
+    Click Edit Book    ${book}[title]
     Clear Book Author
     
     ${has_required}=    Run Keyword And Return Status
@@ -66,8 +67,8 @@ User Can Cancel Book Edit
     [Documentation]    Valida a possibilidade de cancelar edição
     [Tags]    negative    books    ui    ux    ID=BOOKS023
     
-    Click Edit Book    ${book.title}
+    Click Edit Book    ${book}[title]
     Fill Book Title    Changed Title
     Click Cancel Button
-    Book Should Exist In List    ${book.title}
+    Book Should Exist In List    ${book}[title]
     Book Should Not Exist In List    Changed Title

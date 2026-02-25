@@ -38,18 +38,9 @@ Register Should Be Successful
     Wait For Elements State    data-testid=dashboard-page    visible    timeout=10s
 
 Error Message Should Be Visible
-    [Documentation]    Valida erro (com ou sem mensagem visual)
+    [Documentation]    Valida que mensagem de erro aparece com o texto esperado
     [Arguments]    ${message}
-    
-    Sleep    1s
-    
-    ${has_error}=    Run Keyword And Return Status
-    ...    Wait For Elements State    data-testid=error-message    visible    timeout=3s
-    
-    IF    ${has_error}
-        ${error_text}=    Get Text    data-testid=error-message
-        Should Contain Any    ${error_text}    ${message}    já existe    já cadastrado
-    ELSE
-        ${url}=    Get Url
-        Should Contain    ${url}    /register
-    END
+    Wait For Elements State    data-testid=error-message    visible    timeout=5s
+    ...    message=Mensagem de erro não apareceu na página de registro
+    ${error_text}=    Get Text    data-testid=error-message
+    Should Contain    ${error_text}    ${message}

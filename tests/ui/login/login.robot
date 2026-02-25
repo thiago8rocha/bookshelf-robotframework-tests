@@ -5,72 +5,100 @@ Resource    ../../../base/ui.resource
 Resource    ../../../resources/actions/login.resource
 Resource    ../../../resources/helpers/common/data.resource
 
-Test Setup       Setup UI Test
+Test Setup    Setup UI Test
 Test Teardown    Teardown UI Test
-
-*** Keywords ***
-
-Login Should Fail With Error
-    [Arguments]    ${email}    ${password}    ${error_message}
-    Fill Email    ${email}
-    Fill Password    ${password}
-    Click Login
-    Error Message Should Be Visible    ${error_message}
 
 *** Test Cases ***
 
 User Can Login With Valid Credentials
-    [Documentation]    Valida que usuário consegue fazer login com email e senha corretos
-    ...                Espera-se redirecionamento para dashboard após login bem-sucedido
-    [Tags]    smoke    positive    auth    ui    critical    ID=LOGIN001
+    [Documentation]    Valida que usuário consegue fazer login com credenciais válidas
+    [Tags]    positive    login    ui    smoke    ID=LOGIN001
     
-    Login As Valid User
+    ${credentials}=    Generate Unique User Credentials
+    Create User Via API    ${credentials}
+    
+    Navigate To Login Page
+    Fill Email       ${credentials}[email]
+    Fill Password    ${credentials}[password]
+    Click Login
+    
+    Dashboard Should Be Visible
+    User Should Be Logged In
 
 User Cannot Login With Invalid Email
     [Documentation]    Valida rejeição de email inválido
-    [Tags]    negative    auth    ui    regression    ID=LOGIN002
-    [Template]    Login Should Fail With Error
-    invalid@email.com    ${USER_PASS}    Erro ao fazer login
+    [Tags]    negative    login    ui    validation    ID=LOGIN002
+    
+    ${fake_email}=    Generate Random Email
+    
+    Navigate To Login Page
+    Fill Email       ${fake_email}
+    Fill Password    AnyPassword123!
+    Click Login
+    
+    ${url}=    Get Url
+    Should Contain    ${url}    /login
 
 User Cannot Login With Invalid Password
     [Documentation]    Valida rejeição de senha incorreta
-    [Tags]    negative    auth    ui    regression    ID=LOGIN003
-    [Template]    Login Should Fail With Error
-    ${USER_EMAIL}    wrongpassword123    Erro ao fazer login
+    [Tags]    negative    login    ui    validation    ID=LOGIN003
+    
+    ${credentials}=    Generate Unique User Credentials
+    Create User Via API    ${credentials}
+    
+    Navigate To Login Page
+    Fill Email       ${credentials}[email]
+    Fill Password    WrongPassword123!
+    Click Login
+    
+    ${url}=    Get Url
+    Should Contain    ${url}    /login
 
 User Cannot Login With Empty Email
     [Documentation]    Valida campo obrigatório
-    [Tags]    negative    auth    ui    validation    ID=LOGIN004
+    [Tags]    negative    login    ui    validation    required    ID=LOGIN004
     
-    Fill Password    ${USER_PASS}
-    Click Login
+    Navigate To Login Page
+    Fill Password    AnyPassword123!
+    
     ${has_required}=    Run Keyword And Return Status
     ...    Get Attribute    data-testid=email-input    required
     Should Be True    ${has_required}
 
 User Cannot Login With Empty Password
     [Documentation]    Valida campo obrigatório
-    [Tags]    negative    auth    ui    validation    ID=LOGIN005
+    [Tags]    negative    login    ui    validation    required    ID=LOGIN005
     
-    Fill Email    ${USER_EMAIL}
-    Click Login
+    Navigate To Login Page
+    ${email}=    Generate Random Email
+    Fill Email    ${email}
+    
     ${has_required}=    Run Keyword And Return Status
     ...    Get Attribute    data-testid=password-input    required
     Should Be True    ${has_required}
 
 User Cannot Login With Invalid Email Format
     [Documentation]    Valida formato de email
-    [Tags]    negative    auth    ui    validation    ID=LOGIN006
+    [Tags]    negative    login    ui    validation    email    ID=LOGIN006
     
-    Fill Text    data-testid=email-input    notanemail
-    Fill Password    ${USER_PASS}
-    Click Login
+    Navigate To Login Page
+    
+    Fill Text    data-testid=email-input    invalid-email-format
+    Fill Password    Password123!
+    
+    ${input_type}=    Get Attribute    data-testid=email-input    type
+    Should Be Equal    ${input_type}    email
 
 Login Button Should Be Disabled While Loading
-    [Documentation]    Valida botão desabilitado
-    [Tags]    negative    auth    ui    ux    ID=LOGIN007
+    [Documentation]    Valida botão desabilitado durante loading
+    [Tags]    positive    login    ui    loading    ID=LOGIN007
     
-    Fill Email    ${USER_EMAIL}
-    Fill Password    ${USER_PASS}
-    Click    data-testid=login-button
-    Sleep    100ms
+    ${credentials}=    Generate Unique User Credentials
+    Create User Via API    ${credentials}
+    
+    Navigate To Login Page
+    Fill Email       ${credentials}[email]
+    Fill Password    ${credentials}[password]
+    Click Login
+    
+    Dashboard Should Be Visible

@@ -1,14 +1,17 @@
+*** Settings ***
+Library    OperatingSystem
+
 *** Variables ***
 # ==========================================
-# URLS
+# URLS - lidas do ambiente, com fallback para localhost
 # ==========================================
-${BASE_URL}         http://localhost:5173
-${API_URL}          http://localhost:3000
+${BASE_URL}         %{BASE_URL=http://localhost:5173}
+${API_URL}          %{API_URL=http://localhost:3000}
 
 # ==========================================
 # BROWSER
 # ==========================================
-${BROWSER}          chromium
+${BROWSER}          %{BROWSER=chromium}
 ${HEADLESS}         True              
 ${TIMEOUT}          10s
 
