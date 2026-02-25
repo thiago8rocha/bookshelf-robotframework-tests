@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   robot-tests:
     runs-on: ubuntu-latest
@@ -56,9 +61,22 @@ jobs:
           name: robot-results
           path: bookshelf-robot/results
 
-      - name: Upload Allure report
+      - name: Upload Pages artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: allure-report
           path: allure-report
+
+  deploy-pages:
+    name: Deploy Allure to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: robot-tests
+    if: always()
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

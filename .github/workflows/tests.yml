@@ -16,6 +16,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   run-tests:
     name: 🧪 Run All Tests
@@ -46,7 +51,6 @@ jobs:
           echo "Aguardando serviços ficarem saudáveis..."
           for i in $(seq 1 30); do
             HEALTHY=$(docker compose -f docker-compose.ci.yml ps | grep -c "healthy" || true)
-            TOTAL=$(docker compose -f docker-compose.ci.yml ps | grep -c "Up\|running" || true)
             echo "⏳ Serviços saudáveis: $HEALTHY ($i/30)"
             if [ "$HEALTHY" -ge 3 ]; then
               echo "✅ Todos os serviços estão saudáveis"
@@ -63,8 +67,8 @@ jobs:
         id: run_tests
 
       - name: 📊 Upload Test Results
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ github.run_number }}
           path: bookshelf-tests/results/
@@ -92,6 +96,28 @@ jobs:
             echo "⚠️ Arquivo de resultados não encontrado" >> $GITHUB_STEP_SUMMARY
           fi
 
+      - name: 🔧 Install Allure CLI
+        if: always()
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q default-jre
+          ALLURE_VERSION=2.29.0
+          wget -q "https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz"
+          tar -zxf allure-${ALLURE_VERSION}.tgz
+          sudo mv allure-${ALLURE_VERSION} /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+
+      - name: 📊 Generate Allure report
+        if: always()
+        run: |
+          allure generate bookshelf-tests/results -o allure-report --clean
+
+      - name: 📤 Upload Pages artifact
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report
+
       - name: 🧹 Cleanup
         if: always()
         working-directory: bookshelf-tests
@@ -100,3 +126,17 @@ jobs:
       - name: ❌ Fail if tests failed
         if: steps.run_tests.outcome == 'failure'
         run: exit 1
+
+  deploy-pages:
+    name: 🌐 Deploy Allure to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: always()
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
