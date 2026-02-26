@@ -1,0 +1,76 @@
+services:
+  database:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: bookshelf_test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test123
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - ../bookshelf-api/scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d bookshelf_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../bookshelf-api
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=test
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_USER=test
+      - DB_PASSWORD=test123
+      - DB_NAME=bookshelf_test
+      - JWT_SECRET=ci_testing_secret_key_minimum_32_characters_long
+      - CORS_ORIGIN=http://localhost:5173,http://frontend:5173,http://localhost:3000,http://backend:3000
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 3000 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      database:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../bookshelf-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5174:5173"
+    environment:
+      - VITE_API_URL=http://backend:3000
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 5173 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  robot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Volume apenas para resultados — não sobrescreve os arquivos da imagem
+    # Os testes e resources vêm do COPY . . no Dockerfile
+    volumes:
+      - ./results:/app/results
+    environment:
+      - BROWSER=chromium
+      - BASE_URL=http://frontend:5173
+      - API_URL=http://backend:3000
+    depends_on:
+      frontend:
+        condition: service_healthy
+    # CMD padrão definido no Dockerfile — sobrescrito pelo Makefile quando necessário
