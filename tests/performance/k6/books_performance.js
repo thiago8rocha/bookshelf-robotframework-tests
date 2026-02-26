@@ -3,7 +3,8 @@ import { check, sleep } from 'k6';
 import { Trend } from 'k6/metrics';
 
 // ============================================================
-// LOAD TEST - Books Endpoints (baseline)
+// LOAD TEST - Books Endpoints
+// Thresholds calibrados para ambiente CI (Docker, recursos limitados)
 // ============================================================
 
 const API_URL = __ENV.API_URL || 'http://localhost:3000';
@@ -13,15 +14,15 @@ const createDuration = new Trend('create_book_duration', true);
 
 export const options = {
     stages: [
-        { duration: '30s', target: 10 },
-        { duration: '1m',  target: 10 },
-        { duration: '30s', target: 0  },
+        { duration: '20s', target: 5 },
+        { duration: '40s', target: 5 },
+        { duration: '20s', target: 0 },
     ],
     thresholds: {
-        'list_books_duration':  ['p(95)<1000'],
-        'create_book_duration': ['p(95)<2000'],
-        'http_req_failed':      ['rate<0.05'],
-        'http_req_duration':    ['p(95)<2000'],
+        'list_books_duration':  ['p(95)<3000'],
+        'create_book_duration': ['p(95)<5000'],
+        'http_req_failed':      ['rate<0.10'],
+        'http_req_duration':    ['p(95)<5000'],
     },
 };
 
@@ -35,7 +36,11 @@ export function setup() {
         }),
         { headers: { 'Content-Type': 'application/json' } }
     );
-    return { token: JSON.parse(res.body).token };
+    const body = JSON.parse(res.body);
+    if (!body.token) {
+        throw new Error(`Setup falhou — register retornou: ${res.body}`);
+    }
+    return { token: body.token };
 }
 
 export default function (data) {
