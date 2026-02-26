@@ -70,7 +70,7 @@ export default function (data) {
     const ok = check(createRes, { 'create status 201': (r) => r.status === 201 });
 
     if (ok) {
-        const bookId = JSON.parse(createRes.body).id;
+        const bookId = JSON.parse(createRes.body).book.id;
         http.del(`${API_URL}/api/books/${bookId}`, null, { headers });
     }
 
