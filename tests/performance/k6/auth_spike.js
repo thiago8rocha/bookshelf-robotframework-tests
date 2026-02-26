@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Counter, Trend } from 'k6/metrics';
+import { Rate, Trend } from 'k6/metrics';
 
 // ============================================================
 // SPIKE TEST - Auth Endpoints
@@ -13,7 +13,7 @@ const API_URL = __ENV.API_URL || 'http://localhost:3000';
 
 const loginDuration   = new Trend('login_duration',    true);
 const registerDuration = new Trend('register_duration', true);
-const errorRate       = new Counter('error_rate');
+const errorRate       = new Rate('error_rate');
 const requestsTotal   = new Counter('requests_total');
 
 export const options = {
@@ -58,7 +58,7 @@ export default function () {
             try { return !!JSON.parse(r.body).token; } catch { return false; }
         },
     });
-    if (!registerOk) errorRate.add(1);
+    if (!registerOk) errorRate.add(true);
 
     // Login
     const loginStart = Date.now();
@@ -76,7 +76,7 @@ export default function () {
             try { return !!JSON.parse(r.body).token; } catch { return false; }
         },
     });
-    if (!loginOk) errorRate.add(1);
+    if (!loginOk) errorRate.add(true);
 
     sleep(1);
 }
