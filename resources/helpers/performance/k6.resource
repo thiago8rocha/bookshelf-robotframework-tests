@@ -8,7 +8,7 @@ Library    ${EXECDIR}/resources/helpers/performance/AllurePerformance.py
 
 
 *** Variables ***
-${K6_BINARY}          k6
+${K6_BINARY}          /usr/bin/k6
 ${K6_RESULTS_DIR}     ${EXECDIR}/results/performance
 ${K6_TIMEOUT}         900s
 ${API_URL}            %{API_URL=http://localhost:3000}
@@ -40,14 +40,15 @@ Run K6 Test
     ${raw_path}=        Set Variable    ${K6_RESULTS_DIR}/${output}_raw.json
     Log    Executando K6 [${test_type}]: ${script}
     Log    API_URL: ${API_URL}
-    @{cmd}=    Create List
-    ...    ${K6_BINARY}    run
-    ...    --env    API_URL=${API_URL}
-    ...    --summary-export    ${summary_path}
-    ...    --out    json=${raw_path}
+    ${cmd}=    Catenate
+    ...    ${K6_BINARY} run
+    ...    --env API_URL=${API_URL}
+    ...    --summary-export ${summary_path}
+    ...    --out json=${raw_path}
     ...    ${script}
-    ${result}=    Run Process    @{cmd}
-    ...    alias=k6_${output}
+    Log    Comando: ${cmd}
+    ${result}=    Run Process    ${cmd}
+    ...    shell=True
     ...    timeout=${K6_TIMEOUT}
     ...    stdout=PIPE
     ...    stderr=STDOUT
@@ -73,10 +74,6 @@ K6 Should Pass
 
 Attach Performance Results To Allure
     [Documentation]    Gera attachment HTML + JSON no relatório Allure.
-    ...
-    ...    Argumentos:
-    ...    - result:    dicionário retornado por Run K6 Test
-    ...    - test_name: nome legível para o relatório (ex: 'Auth — Spike Test')
     [Arguments]    ${result}    ${test_name}
     ${summary_path}=    Set Variable    ${result}[summary_path]
     ${test_type}=       Set Variable    ${result}[test_type]
