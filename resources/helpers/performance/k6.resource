@@ -30,7 +30,7 @@ Run K6 Test
     [Documentation]    Executa um script K6 e retorna o resultado.
     ...
     ...    Argumentos:
-    ...    - script:    caminho do script K6 (relativo ao EXECDIR)
+    ...    - script:    caminho do script K6
     ...    - output:    nome base para os arquivos de resultado (sem extensão)
     ...    - test_type: tipo de teste — load | spike | soak | stress  (padrão: load)
     ...
@@ -40,16 +40,18 @@ Run K6 Test
     ${raw_path}=        Set Variable    ${K6_RESULTS_DIR}/${output}_raw.json
     Log    Executando K6 [${test_type}]: ${script}
     Log    API_URL: ${API_URL}
-    ${cmd}=    Set Variable
-    ...    ${K6_BINARY} run --env API_URL=${API_URL} --summary-export ${summary_path} --out json=${raw_path} ${script}
     ${result}=    Run Process
-    ...    ${cmd}
-    ...    shell=True
+    ...    ${K6_BINARY}
+    ...    run
+    ...    --env    API_URL=${API_URL}
+    ...    --summary-export    ${summary_path}
+    ...    --out    json=${raw_path}
+    ...    ${script}
     ...    timeout=${K6_TIMEOUT}
     ...    stdout=PIPE
     ...    stderr=STDOUT
-    Log    Saída K6:\n${result.stdout}
     Log    K6 finalizado com rc=${result.rc}
+    Log    ${result.stdout}
     ${run_result}=    Create Dictionary
     ...    rc=${result.rc}
     ...    summary_path=${summary_path}
