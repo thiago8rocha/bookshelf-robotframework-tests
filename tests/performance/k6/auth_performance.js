@@ -28,7 +28,7 @@ export function setup() {
     const password = 'Test@123456';
 
     const res = http.post(
-        `${API_URL}/auth/register`,
+        `${API_URL}/api/auth/register`,
         JSON.stringify({ name: 'Perf Auth User', email, password }),
         { headers: { 'Content-Type': 'application/json' } }
     );
@@ -43,7 +43,7 @@ export function setup() {
 export default function (data) {
     const start = Date.now();
     const res = http.post(
-        `${API_URL}/auth/login`,
+        `${API_URL}/api/auth/login`,
         JSON.stringify({ email: data.email, password: data.password }),
         { headers: { 'Content-Type': 'application/json' } }
     );
