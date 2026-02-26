@@ -18,7 +18,11 @@ ${API_URL}            %{API_URL=http://localhost:3000}
 Setup Performance Suite
     [Documentation]    Verifica pré-requisitos e cria diretório de resultados
     Create Directory    ${K6_RESULTS_DIR}
+    Log To Console    \n[K6] Results dir: ${K6_RESULTS_DIR}
+    Log To Console    [K6] Binary: ${K6_BINARY}
+    Log To Console    [K6] API_URL: ${API_URL}
     ${rc}=    Run And Return Rc    ${K6_BINARY} version
+    Log To Console    [K6] Version check rc: ${rc}
     Should Be Equal As Integers    ${rc}    0
     ...    msg=K6 não está disponível. Verifique a instalação.
 
@@ -28,32 +32,23 @@ Teardown Performance Suite
 
 Run K6 Test
     [Documentation]    Executa um script K6 e retorna o resultado.
-    ...
-    ...    Argumentos:
-    ...    - script:    caminho do script K6
-    ...    - output:    nome base para os arquivos de resultado (sem extensão)
-    ...    - test_type: tipo de teste — load | spike | soak | stress  (padrão: load)
-    ...
-    ...    Retorna dicionário com rc, summary_path, script e test_type.
     [Arguments]    ${script}    ${output}    ${test_type}=load
     ${summary_path}=    Set Variable    ${K6_RESULTS_DIR}/${output}_summary.json
-    ${raw_path}=        Set Variable    ${K6_RESULTS_DIR}/${output}_raw.json
-    Log    Executando K6 [${test_type}]: ${script}
-    Log    API_URL: ${API_URL}
+    Log To Console    \n[K6] Iniciando: ${script}
+    Log To Console    [K6] Summary: ${summary_path}
     ${cmd}=    Catenate
     ...    ${K6_BINARY} run
     ...    --env API_URL=${API_URL}
     ...    --summary-export ${summary_path}
-    ...    --out json=${raw_path}
     ...    ${script}
-    Log    Comando: ${cmd}
+    Log To Console    [K6] Cmd: ${cmd}
     ${result}=    Run Process    ${cmd}
     ...    shell=True
     ...    timeout=${K6_TIMEOUT}
     ...    stdout=PIPE
     ...    stderr=STDOUT
-    Log    K6 finalizado com rc=${result.rc}
-    Log    ${result.stdout}
+    Log To Console    [K6] rc=${result.rc}
+    Log To Console    [K6] stdout=${result.stdout}
     ${run_result}=    Create Dictionary
     ...    rc=${result.rc}
     ...    summary_path=${summary_path}
@@ -77,13 +72,16 @@ Attach Performance Results To Allure
     [Arguments]    ${result}    ${test_name}
     ${summary_path}=    Set Variable    ${result}[summary_path]
     ${test_type}=       Set Variable    ${result}[test_type]
-    File Should Exist    ${summary_path}
-    ...    msg=Summary JSON não encontrado: ${summary_path}
+    ${exists}=    Run Keyword And Return Status    File Should Exist    ${summary_path}
+    IF    not ${exists}
+        Log To Console    [K6] AVISO: summary não encontrado em ${summary_path}
+        Log    Summary não encontrado — attachment Allure pulado    WARN
+        RETURN
+    END
     Attach K6 Results To Allure    ${summary_path}    ${test_name}    ${test_type}
     Log    📊 Attachment Allure gerado para: ${test_name}
 
 K6 Get Metric Value
-    [Documentation]    Extrai o valor de uma métrica do summary JSON.
     [Arguments]    ${result}    ${metric}    ${field}
     ${summary_path}=    Set Variable    ${result}[summary_path]
     File Should Exist    ${summary_path}
@@ -96,8 +94,6 @@ K6 Get Metric Value
     RETURN    ${value}
 
 K6 Threshold Should Not Be Violated
-    [Documentation]    Verifica se um threshold específico não foi violado.
-    ...                No K6 summary, false = passou, true = violado.
     [Arguments]    ${result}    ${metric}    ${threshold}
     ${summary_path}=    Set Variable    ${result}[summary_path]
     File Should Exist    ${summary_path}

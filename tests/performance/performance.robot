@@ -37,8 +37,8 @@ Auth Endpoints Should Meet Performance Thresholds
     ...    script=${SCRIPTS_DIR}/auth_load.js
     ...    output=auth_load
     ...    test_type=load
-    Attach Performance Results To Allure    ${result}    Auth — Load Test
     K6 Should Pass    ${result}
+    Attach Performance Results To Allure    ${result}    Auth — Load Test
 
 Books Endpoints Should Meet Performance Thresholds
     [Documentation]
@@ -50,8 +50,8 @@ Books Endpoints Should Meet Performance Thresholds
     ...    script=${SCRIPTS_DIR}/books_load.js
     ...    output=books_load
     ...    test_type=load
-    Attach Performance Results To Allure    ${result}    Books — Load Test
     K6 Should Pass    ${result}
+    Attach Performance Results To Allure    ${result}    Books — Load Test
 
 
 # ===========================================================
@@ -68,8 +68,8 @@ Auth Endpoints Should Recover After Traffic Spike
     ...    script=${SCRIPTS_DIR}/auth_spike.js
     ...    output=auth_spike
     ...    test_type=spike
-    Attach Performance Results To Allure    ${result}    Auth — Spike Test
     K6 Should Pass    ${result}
+    Attach Performance Results To Allure    ${result}    Auth — Spike Test
 
 Books Endpoints Should Recover After Traffic Spike
     [Documentation]
@@ -81,8 +81,8 @@ Books Endpoints Should Recover After Traffic Spike
     ...    script=${SCRIPTS_DIR}/books_spike.js
     ...    output=books_spike
     ...    test_type=spike
-    Attach Performance Results To Allure    ${result}    Books — Spike Test
     K6 Should Pass    ${result}
+    Attach Performance Results To Allure    ${result}    Books — Spike Test
 
 
 # ===========================================================
@@ -99,8 +99,8 @@ Auth Endpoints Should Not Degrade Under Sustained Load
     ...    script=${SCRIPTS_DIR}/auth_soak.js
     ...    output=auth_soak
     ...    test_type=soak
-    Attach Performance Results To Allure    ${result}    Auth — Soak Test
     K6 Should Pass    ${result}
+    Attach Performance Results To Allure    ${result}    Auth — Soak Test
 
 Books Endpoints Should Not Degrade Under Sustained Load
     [Documentation]
@@ -112,8 +112,8 @@ Books Endpoints Should Not Degrade Under Sustained Load
     ...    script=${SCRIPTS_DIR}/books_soak.js
     ...    output=books_soak
     ...    test_type=soak
-    Attach Performance Results To Allure    ${result}    Books — Soak Test
     K6 Should Pass    ${result}
+    Attach Performance Results To Allure    ${result}    Books — Soak Test
 
 
 # ===========================================================
@@ -132,8 +132,8 @@ Auth Endpoints Should Document Breaking Point
     ...    script=${SCRIPTS_DIR}/auth_stress.js
     ...    output=auth_stress
     ...    test_type=stress
-    Attach Performance Results To Allure    ${result}    Auth — Stress Test
     K6 Should Pass    ${result}
+    Attach Performance Results To Allure    ${result}    Auth — Stress Test
 
 Books Endpoints Should Document Breaking Point
     [Documentation]
@@ -145,5 +145,5 @@ Books Endpoints Should Document Breaking Point
     ...    script=${SCRIPTS_DIR}/books_stress.js
     ...    output=books_stress
     ...    test_type=stress
-    Attach Performance Results To Allure    ${result}    Books — Stress Test
     K6 Should Pass    ${result}
+    Attach Performance Results To Allure    ${result}    Books — Stress Test
