@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Counter, Trend } from 'k6/metrics';
+import { Rate, Trend } from 'k6/metrics';
 
 // ============================================================
 // LOAD TEST - Books Endpoints
@@ -13,7 +13,7 @@ const listDuration   = new Trend('list_books_duration',   true);
 const createDuration = new Trend('create_book_duration',  true);
 const updateDuration = new Trend('update_book_duration',  true);
 const deleteDuration = new Trend('delete_book_duration',  true);
-const errorRate      = new Counter('error_rate');
+const errorRate      = new Rate('error_rate');
 const requestsTotal  = new Counter('requests_total');
 
 export const options = {
@@ -60,7 +60,7 @@ export default function (data) {
     if (!check(listRes, {
         'list books status 200':    (r) => r.status === 200,
         'list books retorna array': (r) => { try { return Array.isArray(JSON.parse(r.body)); } catch { return false; } },
-    })) errorRate.add(1);
+    })) errorRate.add(true);
 
     const createStart = Date.now();
     const createRes = http.post(
@@ -73,7 +73,7 @@ export default function (data) {
     if (!check(createRes, {
         'create book status 201':  (r) => r.status === 201,
         'create book retorna id':  (r) => { try { return !!JSON.parse(r.body).id; } catch { return false; } },
-    })) { errorRate.add(1); sleep(1); return; }
+    })) { errorRate.add(true); sleep(1); return; }
 
     const bookId = JSON.parse(createRes.body).id;
 
@@ -85,13 +85,13 @@ export default function (data) {
     );
     updateDuration.add(Date.now() - updateStart);
     requestsTotal.add(1);
-    if (!check(updateRes, { 'update book status 200': (r) => r.status === 200 })) errorRate.add(1);
+    if (!check(updateRes, { 'update book status 200': (r) => r.status === 200 })) errorRate.add(true);
 
     const deleteStart = Date.now();
     const deleteRes = http.del(`${API_URL}/books/${bookId}`, null, { headers, tags: { endpoint: 'delete' } });
     deleteDuration.add(Date.now() - deleteStart);
     requestsTotal.add(1);
-    if (!check(deleteRes, { 'delete book status 200': (r) => r.status === 200 })) errorRate.add(1);
+    if (!check(deleteRes, { 'delete book status 200': (r) => r.status === 200 })) errorRate.add(true);
 
     sleep(1);
 }

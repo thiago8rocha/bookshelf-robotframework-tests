@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Counter, Trend } from 'k6/metrics';
+import { Rate, Trend } from 'k6/metrics';
 
 // ============================================================
 // SPIKE TEST - Books Endpoints
@@ -13,7 +13,7 @@ const listDuration   = new Trend('list_books_duration',   true);
 const createDuration = new Trend('create_book_duration',  true);
 const updateDuration = new Trend('update_book_duration',  true);
 const deleteDuration = new Trend('delete_book_duration',  true);
-const errorRate      = new Counter('error_rate');
+const errorRate      = new Rate('error_rate');
 const requestsTotal  = new Counter('requests_total');
 
 export const options = {
@@ -60,7 +60,7 @@ export default function (data) {
     listDuration.add(Date.now() - listStart);
     requestsTotal.add(1);
     const listOk = check(listRes, { 'list status 200': (r) => r.status === 200 });
-    if (!listOk) errorRate.add(1);
+    if (!listOk) errorRate.add(true);
 
     // Create
     const createStart = Date.now();
@@ -72,7 +72,7 @@ export default function (data) {
     createDuration.add(Date.now() - createStart);
     requestsTotal.add(1);
     const createOk = check(createRes, { 'create status 201': (r) => r.status === 201 });
-    if (!createOk) { errorRate.add(1); sleep(0.5); return; }
+    if (!createOk) { errorRate.add(true); sleep(0.5); return; }
 
     const bookId = JSON.parse(createRes.body).id;
 
@@ -86,7 +86,7 @@ export default function (data) {
     updateDuration.add(Date.now() - updateStart);
     requestsTotal.add(1);
     const updateOk = check(updateRes, { 'update status 200': (r) => r.status === 200 });
-    if (!updateOk) errorRate.add(1);
+    if (!updateOk) errorRate.add(true);
 
     // Delete
     const deleteStart = Date.now();
@@ -94,7 +94,7 @@ export default function (data) {
     deleteDuration.add(Date.now() - deleteStart);
     requestsTotal.add(1);
     const deleteOk = check(deleteRes, { 'delete status 200': (r) => r.status === 200 });
-    if (!deleteOk) errorRate.add(1);
+    if (!deleteOk) errorRate.add(true);
 
     sleep(0.5);
 }
