@@ -5,6 +5,8 @@ Library     RequestsLibrary
 Library     Collections
 Library     DateTime
 Library     String
+Library     OperatingSystem
+Library     Process
 
 Resource    ../environment.resource
 Resource    ../resources/helpers/api/auth.resource
