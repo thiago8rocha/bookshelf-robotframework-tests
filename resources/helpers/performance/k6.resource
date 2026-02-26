@@ -40,12 +40,13 @@ Run K6 Test
     ${raw_path}=        Set Variable    ${K6_RESULTS_DIR}/${output}_raw.json
     Log    Executando K6 [${test_type}]: ${script}
     Log    API_URL: ${API_URL}
-    ${result}=    Run Process
+    @{cmd}=    Create List
     ...    ${K6_BINARY}    run
     ...    --env    API_URL=${API_URL}
     ...    --summary-export    ${summary_path}
     ...    --out    json=${raw_path}
     ...    ${script}
+    ${result}=    Run Process    @{cmd}
     ...    alias=k6_${output}
     ...    timeout=${K6_TIMEOUT}
     ...    stdout=PIPE
@@ -86,11 +87,6 @@ Attach Performance Results To Allure
 
 K6 Get Metric Value
     [Documentation]    Extrai o valor de uma métrica do summary JSON.
-    ...
-    ...    Argumentos:
-    ...    - result: dicionário retornado por Run K6 Test
-    ...    - metric: nome da métrica (ex: login_duration)
-    ...    - field:  campo (ex: p(95), avg, min, max)
     [Arguments]    ${result}    ${metric}    ${field}
     ${summary_path}=    Set Variable    ${result}[summary_path]
     File Should Exist    ${summary_path}
