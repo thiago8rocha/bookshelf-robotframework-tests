@@ -26,27 +26,26 @@ export const options = {
 };
 
 export function setup() {
-    // Retry até 3x para setup — dá tempo ao backend se estiver ocupado
+    // Tenta registrar com retry usando sleep() nativo do K6
     for (let attempt = 1; attempt <= 3; attempt++) {
         const res = http.post(
             `${API_URL}/auth/register`,
             JSON.stringify({
                 name: 'Perf Books User',
-                email: `perf_books_${Date.now()}@test.com`,
+                email: `perf_books_${Date.now()}_${attempt}@test.com`,
                 password: 'Test@123456',
             }),
             { headers: { 'Content-Type': 'application/json' } }
         );
+
         if (res.status === 201) {
             const body = JSON.parse(res.body);
             if (body.token) return { token: body.token };
         }
-        if (attempt < 3) {
-            // Aguarda antes de tentar novamente
-            const waitUntil = Date.now() + 2000;
-            while (Date.now() < waitUntil) { /* busy wait */ }
-        }
+
+        sleep(2);
     }
+
     throw new Error('Setup falhou após 3 tentativas');
 }
 
