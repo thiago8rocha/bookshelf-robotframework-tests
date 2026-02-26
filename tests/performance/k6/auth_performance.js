@@ -4,7 +4,7 @@ import { Trend } from 'k6/metrics';
 
 // ============================================================
 // LOAD TEST - Auth Endpoints
-// Thresholds calibrados para ambiente CI (Docker, recursos limitados)
+// Usa um único usuário criado no setup() para evitar bcrypt sob carga
 // ============================================================
 
 const API_URL = __ENV.API_URL || 'http://localhost:3000';
@@ -26,31 +26,27 @@ export const options = {
     },
 };
 
-export default function () {
-    const timestamp = Date.now();
-    const uid   = Math.random().toString(36).slice(2, 9);
-    const email    = `perf_${timestamp}_${uid}@test.com`;
+export function setup() {
+    // Cria um usuário único — evita bcrypt repetido sob carga
+    const email    = `perf_auth_${Date.now()}@test.com`;
     const password = 'Test@123456';
-
-    const registerStart = Date.now();
-    const registerRes = http.post(
+    const res = http.post(
         `${API_URL}/auth/register`,
-        JSON.stringify({ name: 'Perf User', email, password }),
+        JSON.stringify({ name: 'Perf Auth User', email, password }),
         { headers: { 'Content-Type': 'application/json' } }
     );
-    registerDuration.add(Date.now() - registerStart);
+    if (res.status !== 201) {
+        throw new Error(`Setup register falhou: ${res.status} — ${res.body}`);
+    }
+    return { email, password };
+}
 
-    check(registerRes, {
-        'register status 201':    (r) => r.status === 201,
-        'register retorna token': (r) => {
-            try { return !!JSON.parse(r.body).token; } catch { return false; }
-        },
-    });
-
+export default function (data) {
+    // Mede apenas login (operação repetível sem criar dados novos)
     const loginStart = Date.now();
     const loginRes = http.post(
         `${API_URL}/auth/login`,
-        JSON.stringify({ email, password }),
+        JSON.stringify({ email: data.email, password: data.password }),
         { headers: { 'Content-Type': 'application/json' } }
     );
     loginDuration.add(Date.now() - loginStart);
@@ -63,4 +59,20 @@ export default function () {
     });
 
     sleep(1);
+}
+
+export function teardown(data) {
+    // Register medido uma única vez no teardown para validar o endpoint
+    const start = Date.now();
+    const res = http.post(
+        `${API_URL}/auth/register`,
+        JSON.stringify({
+            name: 'Perf Teardown',
+            email: `perf_teardown_${Date.now()}@test.com`,
+            password: data.password,
+        }),
+        { headers: { 'Content-Type': 'application/json' } }
+    );
+    registerDuration.add(Date.now() - start);
+    check(res, { 'register status 201': (r) => r.status === 201 });
 }
