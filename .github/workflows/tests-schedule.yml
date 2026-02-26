@@ -1,20 +1,20 @@
 name: ⏰ Scheduled Tests
 
 on:
-  schedule:
-    # Diariamente às 3h AM UTC
-    - cron: '0 3 * * *'
   workflow_dispatch:
     inputs:
-      test_type:
-        description: 'Type of tests to run'
+      test_suite:
+        description: 'Suite de testes'
         required: true
         type: choice
-        default: 'all'
+        default: 'all-fast'
         options:
-          - all
-          - regression
-          - smoke
+          - all-fast        # tudo exceto stress e slow
+          - all-full        # tudo incluindo soak e stress
+          - regression      # tag regression
+          - smoke           # tag smoke
+          - performance     # todos os testes de performance (exceto soak)
+          - performance-full # performance completa com soak
           - fresh-user
           - negative
 
@@ -25,7 +25,7 @@ permissions:
 
 jobs:
   scheduled-tests:
-    name: ⏰ Scheduled - ${{ github.event.inputs.test_type || 'all' }}
+    name: ⏰ ${{ github.event.inputs.test_suite || 'all-fast' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -64,13 +64,38 @@ jobs:
       - name: 🧪 Run Tests
         working-directory: bookshelf-tests
         run: |
-          TEST_TYPE="${{ github.event.inputs.test_type || 'all' }}"
-          if [ "$TEST_TYPE" = "all" ]; then
-            docker compose -f docker-compose.ci.yml run --rm robot
-          else
-            docker compose -f docker-compose.ci.yml run --rm robot \
-              python -m robot --include $TEST_TYPE -d results tests/
-          fi
+          # Determina a suite pelo input manual (padrão: all-fast)
+          SUITE="${{ github.event.inputs.test_suite || 'all-fast' }}"
+
+          echo "▶️  Executando suite: $SUITE"
+
+          case "$SUITE" in
+            all-fast)
+              docker compose -f docker-compose.ci.yml run --rm robot \
+                python -m robot --exclude stress --exclude slow \
+                  --listener allure_robotframework -d results tests/
+              ;;
+            all-full)
+              docker compose -f docker-compose.ci.yml run --rm robot \
+                python -m robot \
+                  --listener allure_robotframework -d results tests/
+              ;;
+            performance)
+              docker compose -f docker-compose.ci.yml run --rm robot \
+                python -m robot --exclude slow --exclude stress \
+                  --listener allure_robotframework -d results tests/performance/
+              ;;
+            performance-full)
+              docker compose -f docker-compose.ci.yml run --rm robot \
+                python -m robot \
+                  --listener allure_robotframework -d results tests/performance/
+              ;;
+            *)
+              docker compose -f docker-compose.ci.yml run --rm robot \
+                python -m robot --include "$SUITE" \
+                  --listener allure_robotframework -d results tests/
+              ;;
+          esac
         continue-on-error: true
         id: run_tests
 
@@ -81,6 +106,28 @@ jobs:
           name: scheduled-results-${{ github.run_number }}
           path: bookshelf-tests/results/
           retention-days: 30
+
+      - name: 📈 Test Report Summary
+        if: always()
+        working-directory: bookshelf-tests
+        run: |
+          echo "## 🧪 Resultados dos Testes Agendados" >> $GITHUB_STEP_SUMMARY
+          if [ -f results/output.xml ]; then
+            python3 -c "
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('results/output.xml')
+          stats = tree.find('.//statistics/total/stat')
+          passed = stats.get('pass', '0')
+          failed = stats.get('fail', '0')
+          skipped = stats.get('skip', '0')
+          total = int(passed) + int(failed) + int(skipped)
+          print(f'| Total | Passou | Falhou | Pulou |')
+          print(f'|---|---|---|---|')
+          print(f'| {total} | ✅ {passed} | ❌ {failed} | ⏭️ {skipped} |')
+          " >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Arquivo de resultados não encontrado" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: 🔧 Install Allure CLI
         if: always()
@@ -112,9 +159,10 @@ jobs:
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: '❌ Scheduled Tests Failed',
-              body: `Testes agendados falharam em ${new Date().toISOString()}
+              title: '❌ Performance Tests Failed',
+              body: `Testes de performance falharam em ${new Date().toISOString()}
               
+              **Suite:** ${{ github.event.inputs.test_suite }}
               **Execução:** [Ver Resultados](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
               
               Verifique os artefatos da execução para detalhes.`,
