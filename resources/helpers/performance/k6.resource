@@ -41,12 +41,12 @@ Run K6 Test
     Log    Executando K6 [${test_type}]: ${script}
     Log    API_URL: ${API_URL}
     ${result}=    Run Process
-    ...    ${K6_BINARY}
-    ...    run
+    ...    ${K6_BINARY}    run
     ...    --env    API_URL=${API_URL}
     ...    --summary-export    ${summary_path}
     ...    --out    json=${raw_path}
     ...    ${script}
+    ...    alias=k6_${output}
     ...    timeout=${K6_TIMEOUT}
     ...    stdout=PIPE
     ...    stderr=STDOUT
