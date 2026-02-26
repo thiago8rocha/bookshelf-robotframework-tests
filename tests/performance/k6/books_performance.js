@@ -4,7 +4,6 @@ import { Trend } from 'k6/metrics';
 
 // ============================================================
 // LOAD TEST - Books Endpoints
-// Thresholds calibrados para ambiente CI (Docker, recursos limitados)
 // ============================================================
 
 const API_URL = __ENV.API_URL || 'http://localhost:3000';
@@ -27,20 +26,28 @@ export const options = {
 };
 
 export function setup() {
-    const res = http.post(
-        `${API_URL}/auth/register`,
-        JSON.stringify({
-            name: 'Perf Books User',
-            email: `perf_books_${Date.now()}@test.com`,
-            password: 'Test@123456',
-        }),
-        { headers: { 'Content-Type': 'application/json' } }
-    );
-    const body = JSON.parse(res.body);
-    if (!body.token) {
-        throw new Error(`Setup falhou — register retornou: ${res.body}`);
+    // Retry até 3x para setup — dá tempo ao backend se estiver ocupado
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        const res = http.post(
+            `${API_URL}/auth/register`,
+            JSON.stringify({
+                name: 'Perf Books User',
+                email: `perf_books_${Date.now()}@test.com`,
+                password: 'Test@123456',
+            }),
+            { headers: { 'Content-Type': 'application/json' } }
+        );
+        if (res.status === 201) {
+            const body = JSON.parse(res.body);
+            if (body.token) return { token: body.token };
+        }
+        if (attempt < 3) {
+            // Aguarda antes de tentar novamente
+            const waitUntil = Date.now() + 2000;
+            while (Date.now() < waitUntil) { /* busy wait */ }
+        }
     }
-    return { token: body.token };
+    throw new Error('Setup falhou após 3 tentativas');
 }
 
 export default function (data) {
