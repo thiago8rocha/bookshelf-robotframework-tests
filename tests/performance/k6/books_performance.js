@@ -29,7 +29,7 @@ export function setup() {
     // Tenta registrar com retry usando sleep() nativo do K6
     for (let attempt = 1; attempt <= 3; attempt++) {
         const res = http.post(
-            `${API_URL}/auth/register`,
+            `${API_URL}/api/auth/register`,
             JSON.stringify({
                 name: 'Perf Books User',
                 email: `perf_books_${Date.now()}_${attempt}@test.com`,
@@ -56,13 +56,13 @@ export default function (data) {
     };
 
     const listStart = Date.now();
-    const listRes = http.get(`${API_URL}/books`, { headers });
+    const listRes = http.get(`${API_URL}/api/books`, { headers });
     listDuration.add(Date.now() - listStart);
     check(listRes, { 'list status 200': (r) => r.status === 200 });
 
     const createStart = Date.now();
     const createRes = http.post(
-        `${API_URL}/books`,
+        `${API_URL}/api/books`,
         JSON.stringify({ title: `Perf Book ${Date.now()}`, author: 'Author', year: 2024 }),
         { headers }
     );
@@ -71,7 +71,7 @@ export default function (data) {
 
     if (ok) {
         const bookId = JSON.parse(createRes.body).id;
-        http.del(`${API_URL}/books/${bookId}`, null, { headers });
+        http.del(`${API_URL}/api/books/${bookId}`, null, { headers });
     }
 
     sleep(1);
