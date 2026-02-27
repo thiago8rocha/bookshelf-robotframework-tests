@@ -36,32 +36,35 @@ User Cannot Register With Existing Email
     Error Message Should Be Visible    já cadastrado
 
 User Cannot Register With Short Password
-    [Documentation]    Valida tamanho mínimo de senha
+    [Documentation]    Senha com menos de 6 caracteres não completa o registro
+    ...                O browser bloqueia via atributo minlength=6 no input
     [Tags]    negative    auth    ui    validation    ID=REGISTER003
     
+    ${email}=    Generate Random Email
     Navigate To Register Page
-    Fill Register Name    Test User
-    Fill Register Email    newuser@test.com
-    Fill Register Password    123
+    Fill Register Name      Test User
+    Fill Register Email     ${email}
+    Fill Register Password  123
     Click Register Button
-    ${has_minlength}=    Run Keyword And Return Status
-    ...    Get Attribute    data-testid=password-input    minlength
-    Should Be True    ${has_minlength}
+    
+    ${dashboard_visible}=    Run Keyword And Return Status
+    ...    Wait For Elements State    data-testid=dashboard-page    visible    timeout=2s
+    Should Not Be True    ${dashboard_visible}
+    
+    ${url}=    Get Url
+    Should Contain    ${url}    /register
 
 User Cannot Register With Empty Fields
-    [Documentation]    Valida campos obrigatórios
+    [Documentation]    Submeter registro com campos vazios não navega para o dashboard
+    ...                O browser bloqueia o submit via validação nativa dos campos required
     [Tags]    negative    auth    ui    validation    ID=REGISTER004
     
     Navigate To Register Page
     Click Register Button
     
-    ${has_name_required}=    Run Keyword And Return Status
-    ...    Get Attribute    data-testid=name-input    required
-    ${has_email_required}=    Run Keyword And Return Status
-    ...    Get Attribute    data-testid=email-input    required
-    ${has_pass_required}=    Run Keyword And Return Status
-    ...    Get Attribute    data-testid=password-input    required
+    ${dashboard_visible}=    Run Keyword And Return Status
+    ...    Wait For Elements State    data-testid=dashboard-page    visible    timeout=2s
+    Should Not Be True    ${dashboard_visible}
     
-    Should Be True    ${has_name_required}
-    Should Be True    ${has_email_required}
-    Should Be True    ${has_pass_required}
+    ${url}=    Get Url
+    Should Contain    ${url}    /register

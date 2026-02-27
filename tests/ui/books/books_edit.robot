@@ -42,26 +42,36 @@ User Can Edit All Book Fields
     User Edits Complete Book    ${book}[title]    ${updated_book}
     Book Should Exist In List    ${updated_book}[title]
 User Cannot Save Edited Book With Empty Title
-    [Documentation]    Valida o título ser obrigatório na edição
+    [Documentation]    Submeter edição com título vazio não salva — modal permanece aberto
+    ...                e o título original permanece na lista
     [Tags]    negative    books    ui    validation    ID=BOOKS021
     
     Click Edit Book    ${book}[title]
     Clear Book Title
+    Click    data-testid=save-book-button
     
-    ${has_required}=    Run Keyword And Return Status
-    ...    Get Attribute    id=title    required
-    Should Be True    ${has_required}    msg=Campo título deve ser obrigatório
+    Wait For Elements State    data-testid=book-modal    visible    timeout=2s
+    
+    Click    data-testid=cancel-button
+    Wait For Elements State    data-testid=book-modal    hidden
+    
+    Book Should Exist In List    ${book}[title]
 
 User Cannot Save Edited Book With Empty Author
-    [Documentation]    Valida o autor ser obrigatório na edição
+    [Documentation]    Submeter edição com autor vazio não salva — modal permanece aberto
+    ...                e o livro original permanece inalterado na lista
     [Tags]    negative    books    ui    validation    ID=BOOKS022
     
     Click Edit Book    ${book}[title]
     Clear Book Author
+    Click    data-testid=save-book-button
     
-    ${has_required}=    Run Keyword And Return Status
-    ...    Get Attribute    id=author    required
-    Should Be True    ${has_required}    msg=Campo autor deve ser obrigatório
+    Wait For Elements State    data-testid=book-modal    visible    timeout=2s
+    
+    Click    data-testid=cancel-button
+    Wait For Elements State    data-testid=book-modal    hidden
+    
+    Book Should Exist In List    ${book}[title]
 
 User Can Cancel Book Edit
     [Documentation]    Valida a possibilidade de cancelar edição
