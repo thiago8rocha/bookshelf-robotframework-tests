@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Rate, Trend } from 'k6/metrics';
+import { Rate, Trend, Counter } from 'k6/metrics';
 
 // ============================================================
 // SPIKE TEST - Books Endpoints
@@ -36,7 +36,7 @@ export const options = {
 
 export function setup() {
     const res = http.post(
-        `${API_URL}/auth/register`,
+        `${API_URL}/api/auth/register`,
         JSON.stringify({
             name: 'Spike Books User',
             email: `spike_books_${Date.now()}@test.com`,
@@ -56,7 +56,7 @@ export default function (data) {
 
     // List
     const listStart = Date.now();
-    const listRes = http.get(`${API_URL}/books`, { headers, tags: { endpoint: 'list' } });
+    const listRes = http.get(`${API_URL}/api/books`, { headers, tags: { endpoint: 'list' } });
     listDuration.add(Date.now() - listStart);
     requestsTotal.add(1);
     const listOk = check(listRes, { 'list status 200': (r) => r.status === 200 });
@@ -65,7 +65,7 @@ export default function (data) {
     // Create
     const createStart = Date.now();
     const createRes = http.post(
-        `${API_URL}/books`,
+        `${API_URL}/api/books`,
         JSON.stringify({ title: `Spike Book ${Date.now()}`, author: 'Spike Author', year: 2024 }),
         { headers, tags: { endpoint: 'create' } }
     );
@@ -74,12 +74,12 @@ export default function (data) {
     const createOk = check(createRes, { 'create status 201': (r) => r.status === 201 });
     if (!createOk) { errorRate.add(true); sleep(0.5); return; }
 
-    const bookId = JSON.parse(createRes.body).id;
+    const bookId = JSON.parse(createRes.body).book.id;
 
     // Update
     const updateStart = Date.now();
     const updateRes = http.put(
-        `${API_URL}/books/${bookId}`,
+        `${API_URL}/api/books/${bookId}`,
         JSON.stringify({ title: `Spike Book Updated ${Date.now()}`, author: 'Spike Author', year: 2025 }),
         { headers, tags: { endpoint: 'update' } }
     );
@@ -90,7 +90,7 @@ export default function (data) {
 
     // Delete
     const deleteStart = Date.now();
-    const deleteRes = http.del(`${API_URL}/books/${bookId}`, null, { headers, tags: { endpoint: 'delete' } });
+    const deleteRes = http.del(`${API_URL}/api/books/${bookId}`, null, { headers, tags: { endpoint: 'delete' } });
     deleteDuration.add(Date.now() - deleteStart);
     requestsTotal.add(1);
     const deleteOk = check(deleteRes, { 'delete status 200': (r) => r.status === 200 });

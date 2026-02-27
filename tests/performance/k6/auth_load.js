@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Rate, Trend } from 'k6/metrics';
+import { Rate, Trend, Counter } from 'k6/metrics';
 
 // ============================================================
 // LOAD TEST - Auth Endpoints
@@ -41,7 +41,7 @@ export default function () {
 
     const registerStart = Date.now();
     const registerRes = http.post(
-        `${API_URL}/auth/register`,
+        `${API_URL}/api/auth/register`,
         JSON.stringify({ name: `Load User ${timestamp}`, email, password }),
         { headers: { 'Content-Type': 'application/json' }, tags: { endpoint: 'register' } }
     );
@@ -58,7 +58,7 @@ export default function () {
 
     const loginStart = Date.now();
     const loginRes = http.post(
-        `${API_URL}/auth/login`,
+        `${API_URL}/api/auth/login`,
         JSON.stringify({ email, password }),
         { headers: { 'Content-Type': 'application/json' }, tags: { endpoint: 'login' } }
     );
