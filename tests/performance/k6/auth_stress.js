@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Rate, Trend } from 'k6/metrics';
+import { Rate, Trend, Counter } from 'k6/metrics';
 
 // ============================================================
 // STRESS TEST - Auth Endpoints
@@ -9,7 +9,7 @@ import { Rate, Trend } from 'k6/metrics';
 // Padrão: escalonamento contínuo até colapso/limite
 // ============================================================
 
-const API_URL = __ENV.API_URL || 'http://localhost:3000';
+const API_URL = __ENV.API_URL || 'http://localhost:3001';
 
 const loginDuration    = new Trend('login_duration',    true);
 const registerDuration = new Trend('register_duration', true);
@@ -36,11 +36,6 @@ export const options = {
 };
 
 export function setup() {
-    // Verifica se a API está saudável antes de começar
-    const res = http.get(`${API_URL}/health`, { tags: { endpoint: 'health' } });
-    if (res.status !== 200) {
-        console.warn(`⚠️  Health check retornou ${res.status} — API pode não estar pronta`);
-    }
     return { startTime: Date.now() };
 }
 
@@ -52,7 +47,7 @@ export default function () {
     // Register
     const registerStart = Date.now();
     const registerRes = http.post(
-        `${API_URL}/auth/register`,
+        `${API_URL}/api/auth/register`,
         JSON.stringify({ name: `Stress User ${timestamp}`, email, password }),
         { headers: { 'Content-Type': 'application/json' }, tags: { endpoint: 'register' } }
     );
@@ -70,7 +65,7 @@ export default function () {
     // Login
     const loginStart = Date.now();
     const loginRes = http.post(
-        `${API_URL}/auth/login`,
+        `${API_URL}/api/auth/login`,
         JSON.stringify({ email, password }),
         { headers: { 'Content-Type': 'application/json' }, tags: { endpoint: 'login' } }
     );

@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Rate, Trend } from 'k6/metrics';
+import { Rate, Trend, Counter } from 'k6/metrics';
 
 // ============================================================
 // SOAK TEST - Books Endpoints
@@ -36,7 +36,7 @@ export const options = {
 
 export function setup() {
     const res = http.post(
-        `${API_URL}/auth/register`,
+        `${API_URL}/api/auth/register`,
         JSON.stringify({
             name: 'Soak Books User',
             email: `soak_books_${Date.now()}@test.com`,
@@ -55,14 +55,14 @@ export default function (data) {
     };
 
     const listStart = Date.now();
-    const listRes = http.get(`${API_URL}/books`, { headers, tags: { endpoint: 'list' } });
+    const listRes = http.get(`${API_URL}/api/books`, { headers, tags: { endpoint: 'list' } });
     listDuration.add(Date.now() - listStart);
     requestsTotal.add(1);
     if (!check(listRes, { 'list status 200': (r) => r.status === 200 })) errorRate.add(true);
 
     const createStart = Date.now();
     const createRes = http.post(
-        `${API_URL}/books`,
+        `${API_URL}/api/books`,
         JSON.stringify({ title: `Soak Book ${Date.now()}`, author: 'Soak Author', year: 2024 }),
         { headers, tags: { endpoint: 'create' } }
     );
@@ -74,11 +74,11 @@ export default function (data) {
         return;
     }
 
-    const bookId = JSON.parse(createRes.body).id;
+    const bookId = JSON.parse(createRes.body).book.id;
 
     const updateStart = Date.now();
     const updateRes = http.put(
-        `${API_URL}/books/${bookId}`,
+        `${API_URL}/api/books/${bookId}`,
         JSON.stringify({ title: `Soak Book Updated ${Date.now()}`, author: 'Soak Author', year: 2025 }),
         { headers, tags: { endpoint: 'update' } }
     );
@@ -87,7 +87,7 @@ export default function (data) {
     if (!check(updateRes, { 'update status 200': (r) => r.status === 200 })) errorRate.add(true);
 
     const deleteStart = Date.now();
-    const deleteRes = http.del(`${API_URL}/books/${bookId}`, null, { headers, tags: { endpoint: 'delete' } });
+    const deleteRes = http.del(`${API_URL}/api/books/${bookId}`, null, { headers, tags: { endpoint: 'delete' } });
     deleteDuration.add(Date.now() - deleteStart);
     requestsTotal.add(1);
     if (!check(deleteRes, { 'delete status 200': (r) => r.status === 200 })) errorRate.add(true);
