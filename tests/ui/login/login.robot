@@ -26,7 +26,7 @@ User Can Login With Valid Credentials
     User Should Be Logged In
 
 User Cannot Login With Invalid Email
-    [Documentation]    Valida rejeição de email inválido
+    [Documentation]    Email não cadastrado exibe mensagem de erro e permanece na página de login
     [Tags]    negative    login    ui    validation    ID=LOGIN002
     
     ${fake_email}=    Generate Random Email
@@ -36,11 +36,15 @@ User Cannot Login With Invalid Email
     Fill Password    AnyPassword123!
     Click Login
     
+    Wait For Elements State    data-testid=error-message    visible    timeout=5s
+    ${error_text}=    Get Text    data-testid=error-message
+    Should Not Be Empty    ${error_text}
+    
     ${url}=    Get Url
     Should Contain    ${url}    /login
 
 User Cannot Login With Invalid Password
-    [Documentation]    Valida rejeição de senha incorreta
+    [Documentation]    Senha incorreta exibe mensagem de erro e permanece na página de login
     [Tags]    negative    login    ui    validation    ID=LOGIN003
     
     ${credentials}=    Generate Unique User Credentials
@@ -51,43 +55,61 @@ User Cannot Login With Invalid Password
     Fill Password    WrongPassword123!
     Click Login
     
+    Wait For Elements State    data-testid=error-message    visible    timeout=5s
+    ${error_text}=    Get Text    data-testid=error-message
+    Should Not Be Empty    ${error_text}
+    
     ${url}=    Get Url
     Should Contain    ${url}    /login
 
 User Cannot Login With Empty Email
-    [Documentation]    Valida campo obrigatório
+    [Documentation]    Submeter login sem email não navega para o dashboard
+    ...                O browser impede o submit via validação nativa do campo required
     [Tags]    negative    login    ui    validation    required    ID=LOGIN004
     
     Navigate To Login Page
     Fill Password    AnyPassword123!
+    Click Login
     
-    ${has_required}=    Run Keyword And Return Status
-    ...    Get Attribute    data-testid=email-input    required
-    Should Be True    ${has_required}
+    ${url}=    Get Url
+    Should Contain    ${url}    /login
+    
+    ${dashboard_visible}=    Run Keyword And Return Status
+    ...    Wait For Elements State    data-testid=dashboard-page    visible    timeout=2s
+    Should Not Be True    ${dashboard_visible}
 
 User Cannot Login With Empty Password
-    [Documentation]    Valida campo obrigatório
+    [Documentation]    Submeter login sem senha não navega para o dashboard
     [Tags]    negative    login    ui    validation    required    ID=LOGIN005
     
     Navigate To Login Page
     ${email}=    Generate Random Email
     Fill Email    ${email}
+    Click Login
     
-    ${has_required}=    Run Keyword And Return Status
-    ...    Get Attribute    data-testid=password-input    required
-    Should Be True    ${has_required}
+    ${url}=    Get Url
+    Should Contain    ${url}    /login
+    
+    ${dashboard_visible}=    Run Keyword And Return Status
+    ...    Wait For Elements State    data-testid=dashboard-page    visible    timeout=2s
+    Should Not Be True    ${dashboard_visible}
 
 User Cannot Login With Invalid Email Format
-    [Documentation]    Valida formato de email
+    [Documentation]    Submeter login com email em formato inválido não navega para o dashboard
+    ...                O browser bloqueia o submit via validação nativa do type=email
     [Tags]    negative    login    ui    validation    email    ID=LOGIN006
     
     Navigate To Login Page
-    
-    Fill Text    data-testid=email-input    invalid-email-format
+    Fill Text        data-testid=email-input    not-an-email
     Fill Password    Password123!
+    Click Login
     
-    ${input_type}=    Get Attribute    data-testid=email-input    type
-    Should Be Equal    ${input_type}    email
+    ${url}=    Get Url
+    Should Contain    ${url}    /login
+    
+    ${dashboard_visible}=    Run Keyword And Return Status
+    ...    Wait For Elements State    data-testid=dashboard-page    visible    timeout=2s
+    Should Not Be True    ${dashboard_visible}
 
 Login Button Should Be Disabled While Loading
     [Documentation]    Valida botão desabilitado durante loading

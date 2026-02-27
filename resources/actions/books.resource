@@ -7,33 +7,33 @@ Resource    ../../base/ui.resource
 User Creates Book
     [Documentation]    Usuario cria um livro com os campos obrigatórios preenchidos
     [Arguments]    ${book}
-    Click Add Book Button    
-    Fill Text    id=title    ${book.title}
-    Fill Text    id=author    ${book.author}
+    Click Add Book Button
+    Fill Text    id=title    ${book}[title]
+    Fill Text    id=author    ${book}[author]
     Click Save Book Button
 
-    RETURN    ${book.title}    ${book.author}
+    RETURN    ${book}[title]    ${book}[author]
 
 User Creates Complete Book
     [Documentation]    Usuario cria um livro com todos os campos preenchidos
     [Arguments]    ${book}
     Click Add Book Button
-    Fill Text    id=title    ${book.title}
-    Fill Text    id=author    ${book.author}
-    Fill Text    id=isbn    ${book.isbn}
-    Fill Text    id=publisher    ${book.publisher}
-    Fill Text    id=publishedYear    ${book.publishedYear}
-    Fill Text    id=pages    ${book.pages}
-    Fill Text    id=language    ${book.language}
-    Fill Text    id=description    ${book.description}
+    Fill Text    id=title    ${book}[title]
+    Fill Text    id=author    ${book}[author]
+    Fill Text    id=isbn    ${book}[isbn]
+    Fill Text    id=publisher    ${book}[publisher]
+    Fill Text    id=publishedYear    ${book}[publishedYear]
+    Fill Text    id=pages    ${book}[pages]
+    Fill Text    id=language    ${book}[language]
+    Fill Text    id=description    ${book}[description]
     Click Save Book Button
 
 Create New Book
     ${book}=    Generate New Book
-    User Creates Book    ${book}  
-    Book Should Exist In List    ${book.title}
+    User Creates Book    ${book}
+    Book Should Exist In List    ${book}[title]
     Set Test Variable    ${book}
-    RETURN    ${book.title}
+    RETURN    ${book}[title]
 
 User Edits Book Title
     [Arguments]    ${old_title}    ${new_title}
@@ -170,6 +170,44 @@ Book Should Not Exist In List
     Wait For Elements State    body    stable    timeout=2s
     ${page_content}=    Get Text    body
     Should Not Contain    ${page_content}    ${title}
+
+Change Book Status
+    [Documentation]    Altera o status de um livro via dropdown/select na lista
+    [Arguments]    ${title}    ${status}
+    ${books}=    Get Elements    css=[data-testid^="book-item-"]
+    FOR    ${book}    IN    @{books}
+        ${book_text}=    Get Text    ${book}
+        ${title_lines}=    Split String    ${book_text}    \n
+        ${book_title}=    Set Variable    ${title_lines}[0]
+        ${has_title}=    Run Keyword And Return Status
+        ...    Should Be Equal    ${book_title}    ${title}
+        IF    ${has_title}
+            ${select}=    Get Element    ${book} >> css=[data-testid^="book-status-"]
+            Select Options By    ${select}    value    ${status}
+            Wait For Elements State    ${select}    stable    timeout=3s
+            RETURN
+        END
+    END
+    Fail    Livro "${title}" não encontrado para alterar status
+
+Book Status Should Be
+    [Documentation]    Verifica que o status de um livro é o esperado
+    [Arguments]    ${title}    ${expected_status}
+    ${books}=    Get Elements    css=[data-testid^="book-item-"]
+    FOR    ${book}    IN    @{books}
+        ${book_text}=    Get Text    ${book}
+        ${title_lines}=    Split String    ${book_text}    \n
+        ${book_title}=    Set Variable    ${title_lines}[0]
+        ${has_title}=    Run Keyword And Return Status
+        ...    Should Be Equal    ${book_title}    ${title}
+        IF    ${has_title}
+            ${select}=    Get Element    ${book} >> css=[data-testid^="book-status-"]
+            ${current_value}=    Get Property    ${select}    value
+            Should Be Equal    ${current_value}    ${expected_status}
+            RETURN
+        END
+    END
+    Fail    Livro "${title}" não encontrado para verificar status
 
 Books List Should Be Empty
     Wait For Elements State    body    stable    timeout=2s

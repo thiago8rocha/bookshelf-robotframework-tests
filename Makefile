@@ -48,7 +48,8 @@ help:
 	@echo "  Resultados:"
 	@echo "    make report          Abre o relatório HTML no browser (results/log.html)"
 	@echo ""
-
+	@echo "    make test-status     Roda apenas testes de status de livros"
+	
 ## ─────────────────────────────────────────────────────────────────────────────
 ##  INFRAESTRUTURA
 ## ─────────────────────────────────────────────────────────────────────────────
@@ -106,6 +107,9 @@ test-ui:
 
 test-e2e:
 	$(MAKE) _run ROBOT_ARGS="tests/e2e"
+
+test-status:
+	$(MAKE) _run ROBOT_ARGS="tests/ui/books/books_status.robot"
 
 test-performance:
 	$(MAKE) _run ROBOT_ARGS="tests/performance"

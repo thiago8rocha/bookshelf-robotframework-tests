@@ -173,26 +173,42 @@ New User Can Create First Book With All Fields
     Should Contain    ${stats_after}    1
 
 User Cannot Create Book Without Title
-    [Documentation]    Valida que título é obrigatório
+    [Documentation]    Submeter modal de criação sem título não salva o livro
+    ...                O modal permanece aberto e nenhum livro é adicionado à lista
     [Tags]    negative    books    ui    validation    ID=BOOKS009
+    
+    ${initial_count}=    Get Book Count From UI
     
     Click Add Book Button
     Fill Text    id=author    Some Author
+    Click    data-testid=save-book-button
     
-    ${has_required}=    Run Keyword And Return Status
-    ...    Get Attribute    id=title    required
-    Should Be True    ${has_required}
+    Wait For Elements State    data-testid=book-modal    visible    timeout=2s
+    
+    Click    data-testid=cancel-button
+    Wait For Elements State    data-testid=book-modal    hidden
+    
+    ${final_count}=    Get Book Count From UI
+    Should Be Equal As Integers    ${final_count}    ${initial_count}
 
 User Cannot Create Book Without Author
-    [Documentation]    Valida que autor é obrigatório
+    [Documentation]    Submeter modal de criação sem autor não salva o livro
+    ...                O modal permanece aberto e nenhum livro é adicionado à lista
     [Tags]    negative    books    ui    validation    ID=BOOKS010
+    
+    ${initial_count}=    Get Book Count From UI
     
     Click Add Book Button
     Fill Text    id=title    Some Title
+    Click    data-testid=save-book-button
     
-    ${has_required}=    Run Keyword And Return Status
-    ...    Get Attribute    id=author    required
-    Should Be True    ${has_required}
+    Wait For Elements State    data-testid=book-modal    visible    timeout=2s
+    
+    Click    data-testid=cancel-button
+    Wait For Elements State    data-testid=book-modal    hidden
+    
+    ${final_count}=    Get Book Count From UI
+    Should Be Equal As Integers    ${final_count}    ${initial_count}
 
 User Can Cancel Book Creation
     [Documentation]    Valida cancelar criação

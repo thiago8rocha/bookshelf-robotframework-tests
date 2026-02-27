@@ -121,19 +121,21 @@ All Images Should Have Alt Text
     END
 
 Form Errors Should Be Accessible
-    [Documentation]    Valida validação HTML5 de formulários
+    [Documentation]    Submeter formulário vazio exibe feedback de validação nativo do browser —
+    ...                o usuário permanece na página de login sem navegar para o dashboard
     [Tags]    accessibility    forms    ui    ID=ACCESS007
-    
+
     Go To    ${BASE_URL}/login
-    
-    ${has_email_required}=    Run Keyword And Return Status
-    ...    Get Attribute    data-testid=email-input    required
-    
-    ${has_password_required}=    Run Keyword And Return Status
-    ...    Get Attribute    data-testid=password-input    required
-    
-    ${has_validation}=    Evaluate    ${has_email_required} or ${has_password_required}
-    Should Be True    ${has_validation}
+
+    Click    data-testid=login-button
+
+    ${url}=    Get Url
+    Should Contain    ${url}    /login
+
+    ${dashboard_visible}=    Run Keyword And Return Status
+    ...    Wait For Elements State    data-testid=dashboard-page    visible    timeout=2s
+    Should Not Be True    ${dashboard_visible}
+    ...    msg=Dashboard acessível sem credenciais — validação de formulário não está bloqueando submit
 
 Tab Navigation Should Follow Logical Order In Book Form
     [Documentation]    Valida ordem lógica de Tab no formulário de livros

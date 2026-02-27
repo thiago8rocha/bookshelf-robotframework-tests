@@ -395,6 +395,48 @@ Should Return 404 When Deleting Nonexistent Book
     Response Status Should Be    ${resp}    404
     Response Should Contain Key    ${resp}    error
 
+Delete Response Should Contain Deleted Book Data
+    [Documentation]    DELETE /api/books/:id retorna o livro removido no campo 'book'
+    ...                Garante que o frontend pode confirmar qual livro foi deletado
+    [Tags]    positive    api    books    contract    ID=API039
+
+    ${book}=    Generate Book With Required Fields Only
+    ${create_resp}=    POST Authenticated    /api/books    ${book}    ${SUITE_USER_TOKEN}
+    ${book_id}=    Set Variable    ${create_resp.json()}[book][id]
+
+    ${resp}=    DELETE Authenticated    /api/books/${book_id}    ${SUITE_USER_TOKEN}
+    Response Status Should Be    ${resp}    200
+
+    ${json}=    Set Variable    ${resp.json()}
+    Dictionary Should Contain Key    ${json}    book
+    ${deleted}=    Set Variable    ${json}[book]
+
+    Should Be Equal    ${deleted}[id]       ${book_id}
+    Should Be Equal    ${deleted}[title]    ${book}[title]
+    Should Be Equal    ${deleted}[author]   ${book}[author]
+
+Should Search Books By Title
+    [Documentation]    GET /api/books?search=<termo> retorna apenas livros cujo título contém o termo
+    [Tags]    positive    api    books    filter    ID=API040
+
+    ${unique_word}=    Evaluate    'ROBOTTESTWORD' + str(__import__('random').randint(10000, 99999))
+
+    ${book_match}=    Create Dictionary    title=${unique_word} — Livro Encontrado    author=Autor A
+    ${create_resp}=    POST Authenticated    /api/books    ${book_match}    ${SUITE_USER_TOKEN}
+    Save Book ID For Cleanup    ${create_resp.json()}[book][id]
+
+    ${book_no_match}=    Generate Book With Required Fields Only
+    ${create_resp2}=    POST Authenticated    /api/books    ${book_no_match}    ${SUITE_USER_TOKEN}
+    Save Book ID For Cleanup    ${create_resp2.json()}[book][id]
+
+    ${resp}=    GET Authenticated    /api/books?search=${unique_word}    ${SUITE_USER_TOKEN}
+    Response Status Should Be    ${resp}    200
+
+    ${books}=    Set Variable    ${resp.json()}[books]
+    ${found}=    Evaluate    any(b['title'] for b in $books if '${unique_word}' in b['title'])
+    Should Be True    ${found}
+    ...    msg=Livro com título contendo "${unique_word}" não apareceu nos resultados de busca
+
 # ─── Authorization (cross-user) ───────────────────────────────────────────────
 
 User Cannot Access Another Users Book
