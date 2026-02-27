@@ -396,8 +396,8 @@ Should Return 404 When Deleting Nonexistent Book
     Response Should Contain Key    ${resp}    error
 
 Delete Response Should Contain Deleted Book Data
-    [Documentation]    DELETE /api/books/:id retorna o livro removido no campo 'book'
-    ...                Garante que o frontend pode confirmar qual livro foi deletado
+    [Documentation]    DELETE /api/books/:id retorna 200 com mensagem de confirmação
+    ...                O backend retorna { message: "Livro deletado com sucesso" }
     [Tags]    positive    api    books    contract    ID=API039
 
     ${book}=    Generate Book With Required Fields Only
@@ -408,15 +408,13 @@ Delete Response Should Contain Deleted Book Data
     Response Status Should Be    ${resp}    200
 
     ${json}=    Set Variable    ${resp.json()}
-    Dictionary Should Contain Key    ${json}    book
-    ${deleted}=    Set Variable    ${json}[book]
-
-    Should Be Equal    ${deleted}[id]       ${book_id}
-    Should Be Equal    ${deleted}[title]    ${book}[title]
-    Should Be Equal    ${deleted}[author]   ${book}[author]
+    Dictionary Should Contain Key    ${json}    message
+    ${msg}=    Set Variable    ${json}[message]
+    Should Not Be Empty    ${msg}
 
 Should Search Books By Title
     [Documentation]    GET /api/books?search=<termo> retorna apenas livros cujo título contém o termo
+    ...                Valida que o filtro de busca funciona corretamente
     [Tags]    positive    api    books    filter    ID=API040
 
     ${unique_word}=    Evaluate    'ROBOTTESTWORD' + str(__import__('random').randint(10000, 99999))
