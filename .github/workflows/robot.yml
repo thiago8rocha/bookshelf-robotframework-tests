@@ -1,82 +1,211 @@
-name: Robot Tests
+name: Robot Framework Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [master, main]
   pull_request:
-    branches: [ main ]
+    branches: [master, main]
+
+  # ── Disparo manual pelo GitHub UI ──────────────────────────────────────────
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: "Qual suíte rodar?"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - api
+          - ui
+          - e2e
+          - performance
+          - smoke
+      extra_args:
+        description: "Argumentos extras do Robot (ex: --include login)"
+        required: false
+        default: ""
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 jobs:
-  robot-tests:
+  test:
+    name: Run Robot Framework Tests
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Backend
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout robot tests
+        uses: actions/checkout@v4
+
+      # ── 2. Checkout da aplicação (bookshelf-api) ──────────────────────────
+      - name: Checkout bookshelf-api
         uses: actions/checkout@v4
         with:
           repository: thiago8rocha/bookshelf-api
           path: bookshelf-api
 
-      - name: Checkout Frontend
+      # ── 3. Checkout do frontend ───────────────────────────────────────────
+      - name: Checkout bookshelf-frontend
         uses: actions/checkout@v4
         with:
           repository: thiago8rocha/bookshelf-frontend
           path: bookshelf-frontend
 
-      - name: Checkout Robot Tests
-        uses: actions/checkout@v4
-        with:
-          path: bookshelf-robot
+      # ── 4. Definir pasta dos resultados Allure ─────────────────────────────
+      - name: Set results directory
+        run: mkdir -p allure-results
 
-      - name: Run CI Environment and Tests
-        working-directory: ./bookshelf-robot
+      # ── 5. Determinar argumentos do Robot ─────────────────────────────────
+      - name: Resolve Robot arguments
+        id: robot_args
         run: |
-          docker compose -f docker-compose.ci.yml up --build --exit-code-from robot --abort-on-container-exit
+          SUITE="${{ github.event.inputs.test_suite || 'all' }}"
+          EXTRA="${{ github.event.inputs.extra_args }}"
 
-      - name: Install Allure CLI
+          case "$SUITE" in
+            all)         ARGS="--exclude stress --exclude slow tests" ;;
+            api)         ARGS="tests/api" ;;
+            ui)          ARGS="tests/ui" ;;
+            e2e)         ARGS="tests/e2e" ;;
+            performance) ARGS="--exclude stress --exclude slow tests/performance" ;;
+            smoke)       ARGS="--include smoke tests" ;;
+            *)           ARGS="--exclude stress --exclude slow tests" ;;
+          esac
+
+          if [ -n "$EXTRA" ]; then
+            ARGS="$ARGS $EXTRA"
+          fi
+
+          echo "args=$ARGS" >> $GITHUB_OUTPUT
+          echo "🤖 Robot args: $ARGS"
+
+      # ── 6. Subir a aplicação com Docker Compose ──────────────────────────
+      - name: Start application services
+        run: |
+          docker compose -f docker-compose.ci.yml up -d --build database backend frontend
+        env:
+          COMPOSE_BAKE: false
+
+      # ── 7. Aguardar healthchecks ──────────────────────────────────────────
+      - name: Wait for services to be healthy
+        run: |
+          echo "⏳ Aguardando serviços ficarem saudáveis..."
+          for i in $(seq 1 30); do
+            HEALTHY=$(docker compose -f docker-compose.ci.yml ps | grep -c "healthy" || true)
+            echo "   Serviços saudáveis: $HEALTHY (tentativa $i/30)"
+            if [ "$HEALTHY" -ge 3 ]; then
+              echo "✅ Todos os serviços prontos!"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "❌ Timeout aguardando healthchecks"
+              docker compose -f docker-compose.ci.yml logs
+              exit 1
+            fi
+            sleep 5
+          done
+
+      # ── 8. Build da imagem Robot ──────────────────────────────────────────
+      - name: Build Robot image
+        run: docker compose -f docker-compose.ci.yml build robot
+
+      # ── 9. Executar testes ─────────────────────────────────────────────────
+      - name: Run Robot Framework tests
+        id: run_tests
+        run: |
+          docker compose -f docker-compose.ci.yml run --rm \
+            -v ${{ github.workspace }}/allure-results:/app/allure-results \
+            robot \
+            python -m robot \
+              --listener allure_robotframework:/app/allure-results \
+              --outputdir /app/results \
+              --output output.xml \
+              --log log.html \
+              --report report.html \
+              ${{ steps.robot_args.outputs.args }}
+        continue-on-error: true
+
+      # ── 10. Copiar resultados Robot para fora do container ─────────────────
+      - name: Copy Robot results
         if: always()
         run: |
-          sudo apt-get update -q
-          sudo apt-get install -y -q default-jre
-          ALLURE_VERSION=2.29.0
-          wget -q "https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz"
-          tar -zxf allure-${ALLURE_VERSION}.tgz
-          sudo mv allure-${ALLURE_VERSION} /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          mkdir -p robot-results
+          # Extrai results do volume do container via imagem já builded
+          docker compose -f docker-compose.ci.yml run --rm \
+            -v ${{ github.workspace }}/robot-results:/output \
+            --entrypoint sh robot \
+            -c "cp -r /app/results/* /output/ 2>/dev/null || true"
+        continue-on-error: true
 
+      # ── 11. Instalar Allure CLI (Node.js — sem Java) ───────────────────────
+      - name: Install Allure CLI
+        if: always()
+        run: npm install -g allure-commandline@latest || npm install -g allure@latest
+
+      # ── 12. Gerar relatório Allure ─────────────────────────────────────────
       - name: Generate Allure report
         if: always()
         run: |
-          allure generate bookshelf-robot/results -o allure-report --clean
+          if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
+            npx allure generate allure-results --output allure-report --clean
+            echo "✅ Allure report gerado com sucesso"
+          else
+            echo "⚠️  Nenhum resultado Allure encontrado"
+            mkdir -p allure-report
+          fi
+        continue-on-error: true
 
-      - name: Upload Robot results
+      # ── 13. Deploy do Allure para GitHub Pages ─────────────────────────────
+      - name: Deploy Allure report to GitHub Pages
+        if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          publish_branch: gh-pages
+          destination_dir: allure-report
+
+      # ── 14. Upload Allure results como artefato ────────────────────────────
+      - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: robot-results
-          path: bookshelf-robot/results
+          name: allure-results
+          path: allure-results/
+          retention-days: 30
 
-      - name: Upload Pages artifact
+      # ── 15. Upload relatório Allure como artefato ──────────────────────────
+      - name: Upload Allure report
         if: always()
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: allure-report
+          name: allure-report
+          path: allure-report/
+          retention-days: 30
 
-  deploy-pages:
-    name: Deploy Allure to GitHub Pages
-    runs-on: ubuntu-latest
-    needs: robot-tests
-    if: always()
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      # ── 16. Upload relatório Robot HTML como artefato ─────────────────────
+      - name: Upload Robot HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-html-report
+          path: robot-results/
+          retention-days: 14
 
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      # ── 17. Mostrar URL do relatório ───────────────────────────────────────
+      - name: Report URL
+        if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+        run: |
+          echo "📊 Allure Report disponível em:"
+          echo "https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/"
+
+      # ── 18. Falhar o job se os testes falharam ─────────────────────────────
+      - name: Check test results
+        if: steps.run_tests.outcome == 'failure'
+        run: |
+          echo "❌ Testes falharam. Verifique o relatório Allure para detalhes."
+          exit 1

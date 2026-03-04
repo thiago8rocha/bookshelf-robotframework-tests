@@ -175,3 +175,17 @@ Stats Update Is Immediate After Action
 
     ${total_deletado}=    Get Text    data-testid=stats-total
     Should Contain    ${total_deletado}    0
+
+Dashboard Header Displays Logged In User Name
+    [Documentation]    O header do dashboard exibe o nome do usuário logado
+    ...                Valida que o App.tsx renderiza corretamente user.name no header
+    [Tags]    positive    dashboard    ui    ID=DASH007
+
+    ${credentials}=    Generate Unique User Credentials
+    Create User Via API    ${credentials}
+    Login With Credentials    ${credentials}[email]    ${credentials}[password]
+
+    Wait For Elements State    data-testid=dashboard-page    visible    timeout=15s
+
+    ${header_text}=    Get Text    css=header
+    Should Contain    ${header_text}    ${credentials}[name]
