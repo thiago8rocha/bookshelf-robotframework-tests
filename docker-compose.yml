@@ -10,7 +10,7 @@ services:
     tmpfs:
       - /var/lib/postgresql/data
     volumes:
-      - ../bookshelf-api/scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${BOOKSHELF_API_PATH:-../bookshelf-api}/scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U test -d bookshelf_test"]
       interval: 10s
@@ -19,7 +19,7 @@ services:
 
   backend:
     build:
-      context: ../bookshelf-api
+      context: ${BOOKSHELF_API_PATH:-../bookshelf-api}
       dockerfile: Dockerfile
     ports:
       - "3001:3000"
@@ -43,7 +43,7 @@ services:
 
   frontend:
     build:
-      context: ../bookshelf-frontend
+      context: ${BOOKSHELF_FRONTEND_PATH:-../bookshelf-frontend}
       dockerfile: Dockerfile
     ports:
       - "5174:5173"
@@ -62,15 +62,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # Sem volume bind mount — usa os arquivos copiados pelo COPY . . no Dockerfile
-    # O volume .:/app sobrescreveria a imagem com o filesystem local e causaria
-    # inconsistências entre ambiente local (Windows) e CI (Linux)
+    # Volume de resultados — presente apenas quando a variável RESULTS_VOLUME estiver definida.
+    # Local: o Makefile seta RESULTS_VOLUME=./results:/app/results automaticamente.
+    # CI: a variável não é definida, então nenhum volume é montado.
+    volumes:
+      - ${RESULTS_VOLUME:-/dev/null:/dev/null.ignore}
     environment:
       - BROWSER=chromium
       - BASE_URL=http://frontend:5173
       - API_URL=http://backend:3000
-    # --exclude stress: thresholds tolerantes, documenta limite do sistema
-    # --exclude slow: soak tests de 12min, rodam via workflow_dispatch no schedule
     depends_on:
       frontend:
         condition: service_healthy
