@@ -179,7 +179,7 @@ jobs:
         if: always()
         run: |
           if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
-            npx allure generate --output allure-report allure-results --clean
+            npx allure generate --output allure-report allure-results
             echo "Allure report generated successfully"
           else
             echo "No Allure results found"
