@@ -1,4 +1,4 @@
-name: 🤖 Robot Framework Tests
+name: Robot Framework Tests
 
 on:
   push:
@@ -10,17 +10,17 @@ on:
   workflow_dispatch:
     inputs:
       test_suite:
-        description: "Qual suíte rodar?"
+        description: "Qual suite rodar?"
         required: true
         default: "all"
         type: choice
         options:
-          - all             # tudo exceto stress e slow
-          - all-full        # tudo incluindo soak e stress
+          - all
+          - all-full
           - api
           - ui
           - e2e
-          - performance     # performance exceto soak
+          - performance
           - performance-full
           - smoke
           - regression
@@ -38,28 +38,28 @@ permissions:
 
 jobs:
   test:
-    name: 🧪 ${{ github.event.inputs.test_suite || 'all' }}
+    name: ${{ github.event.inputs.test_suite || 'all' }}
     runs-on: ubuntu-latest
 
     steps:
       # ── 1. Checkout dos repositórios ─────────────────────────────────────
-      - name: 📥 Checkout Robot Tests
+      - name: Checkout Robot Tests
         uses: actions/checkout@v4
 
-      - name: 📥 Checkout bookshelf-api
+      - name: Checkout bookshelf-api
         uses: actions/checkout@v4
         with:
           repository: thiago8rocha/bookshelf-api
           path: bookshelf-api
 
-      - name: 📥 Checkout bookshelf-frontend
+      - name: Checkout bookshelf-frontend
         uses: actions/checkout@v4
         with:
           repository: thiago8rocha/bookshelf-frontend
           path: bookshelf-frontend
 
       # ── 2. Determinar argumentos do Robot ─────────────────────────────────
-      - name: 🔧 Resolve Robot arguments
+      - name: Resolve Robot arguments
         id: robot_args
         run: |
           SUITE="${{ github.event.inputs.test_suite || 'all' }}"
@@ -85,28 +85,30 @@ jobs:
           fi
 
           echo "args=$ARGS" >> $GITHUB_OUTPUT
-          echo "🤖 Robot args: $ARGS"
+          echo "Robot args: $ARGS"
 
       # ── 3. Subir a aplicação ──────────────────────────────────────────────
-      - name: 🐳 Start application services
+      - name: Start application services
         env:
           BOOKSHELF_API_PATH: ${{ github.workspace }}/bookshelf-api
           BOOKSHELF_FRONTEND_PATH: ${{ github.workspace }}/bookshelf-frontend
+          RESULTS_PATH: ${{ github.workspace }}/robot-results
         run: |
+          mkdir -p ${{ github.workspace }}/robot-results
           docker compose -f docker-compose.yml up -d --build database backend frontend
 
       # ── 4. Aguardar healthchecks ──────────────────────────────────────────
-      - name: ⏳ Wait for services to be healthy
+      - name: Wait for services to be healthy
         run: |
           for i in $(seq 1 30); do
             HEALTHY=$(docker compose -f docker-compose.yml ps | grep -c "healthy" || true)
-            echo "   Serviços saudáveis: $HEALTHY (tentativa $i/30)"
+            echo "Servicos saudaveis: $HEALTHY (tentativa $i/30)"
             if [ "$HEALTHY" -ge 3 ]; then
-              echo "✅ Todos os serviços prontos!"
+              echo "Todos os servicos prontos!"
               break
             fi
             if [ "$i" -eq 30 ]; then
-              echo "❌ Timeout aguardando healthchecks"
+              echo "Timeout aguardando healthchecks"
               docker compose -f docker-compose.yml logs
               exit 1
             fi
@@ -114,16 +116,24 @@ jobs:
           done
 
       # ── 5. Build da imagem Robot ──────────────────────────────────────────
-      - name: 🔨 Build Robot image
+      - name: Build Robot image
+        env:
+          BOOKSHELF_API_PATH: ${{ github.workspace }}/bookshelf-api
+          BOOKSHELF_FRONTEND_PATH: ${{ github.workspace }}/bookshelf-frontend
+          RESULTS_PATH: ${{ github.workspace }}/robot-results
         run: docker compose -f docker-compose.yml build robot
 
       # ── 6. Criar pasta de resultados Allure ──────────────────────────────
-      - name: 📁 Create results directory
+      - name: Create results directory
         run: mkdir -p allure-results
 
       # ── 7. Executar testes ─────────────────────────────────────────────────
-      - name: 🧪 Run Robot Framework tests
+      - name: Run Robot Framework tests
         id: run_tests
+        env:
+          BOOKSHELF_API_PATH: ${{ github.workspace }}/bookshelf-api
+          BOOKSHELF_FRONTEND_PATH: ${{ github.workspace }}/bookshelf-frontend
+          RESULTS_PATH: ${{ github.workspace }}/robot-results
         run: |
           docker compose -f docker-compose.yml run --rm \
             -v ${{ github.workspace }}/allure-results:/app/allure-results \
@@ -137,22 +147,11 @@ jobs:
               ${{ steps.robot_args.outputs.args }}
         continue-on-error: true
 
-      # ── 8. Copiar resultados Robot para o workspace ────────────────────────
-      - name: 📋 Copy Robot results
+      # ── 8. Sumario no GitHub ──────────────────────────────────────────────
+      - name: Test Report Summary
         if: always()
         run: |
-          mkdir -p robot-results
-          docker compose -f docker-compose.yml run --rm \
-            -v ${{ github.workspace }}/robot-results:/output \
-            --entrypoint sh robot \
-            -c "cp -r /app/results/* /output/ 2>/dev/null || true"
-        continue-on-error: true
-
-      # ── 9. Sumário no GitHub ──────────────────────────────────────────────
-      - name: 📈 Test Report Summary
-        if: always()
-        run: |
-          echo "## 🧪 Resultados dos Testes" >> $GITHUB_STEP_SUMMARY
+          echo "## Resultados dos Testes" >> $GITHUB_STEP_SUMMARY
           if [ -f robot-results/output.xml ]; then
             python3 -c "
           import xml.etree.ElementTree as ET
@@ -164,32 +163,32 @@ jobs:
           total = int(passed) + int(failed) + int(skipped)
           print(f'| Total | Passou | Falhou | Pulou |')
           print(f'|---|---|---|---|')
-          print(f'| {total} | ✅ {passed} | ❌ {failed} | ⏭️ {skipped} |')
+          print(f'| {total} | {passed} | {failed} | {skipped} |')
           " >> $GITHUB_STEP_SUMMARY
           else
-            echo "⚠️ Arquivo de resultados não encontrado" >> $GITHUB_STEP_SUMMARY
+            echo "Arquivo de resultados nao encontrado" >> $GITHUB_STEP_SUMMARY
           fi
 
-      # ── 10. Instalar Allure CLI (Node.js — sem Java) ───────────────────────
-      - name: 🔧 Install Allure CLI
+      # ── 9. Instalar Allure CLI (Node.js — sem Java) ───────────────────────
+      - name: Install Allure CLI
         if: always()
         run: npm install -g allure@latest
 
-      # ── 11. Gerar relatório Allure ─────────────────────────────────────────
-      - name: 📊 Generate Allure report
+      # ── 10. Gerar relatorio Allure ─────────────────────────────────────────
+      - name: Generate Allure report
         if: always()
         run: |
           if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
             npx allure generate allure-results --output allure-report --clean
-            echo "✅ Allure report gerado com sucesso"
+            echo "Allure report gerado com sucesso"
           else
-            echo "⚠️  Nenhum resultado Allure encontrado"
+            echo "Nenhum resultado Allure encontrado"
             mkdir -p allure-report
           fi
         continue-on-error: true
 
-      # ── 12. Deploy do Allure para GitHub Pages ─────────────────────────────
-      - name: 🌐 Deploy Allure report to GitHub Pages
+      # ── 11. Deploy do Allure para GitHub Pages ─────────────────────────────
+      - name: Deploy Allure report to GitHub Pages
         if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -198,8 +197,8 @@ jobs:
           publish_branch: gh-pages
           destination_dir: allure-report
 
-      # ── 13. Artefatos ──────────────────────────────────────────────────────
-      - name: 📤 Upload Allure results
+      # ── 12. Artefatos ──────────────────────────────────────────────────────
+      - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -207,7 +206,7 @@ jobs:
           path: allure-results/
           retention-days: 30
 
-      - name: 📤 Upload Allure report
+      - name: Upload Allure report
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -215,7 +214,7 @@ jobs:
           path: allure-report/
           retention-days: 30
 
-      - name: 📤 Upload Robot HTML report
+      - name: Upload Robot HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -223,32 +222,36 @@ jobs:
           path: robot-results/
           retention-days: 14
 
-      # ── 14. Criar Issue em caso de falha ──────────────────────────────────
-      - name: 🐛 Create Issue on failure
-        if: steps.run_tests.outcome == 'failure' && github.ref == 'refs/heads/main' || steps.run_tests.outcome == 'failure' && github.ref == 'refs/heads/master'
+      # ── 13. Criar Issue em caso de falha ──────────────────────────────────
+      - name: Create Issue on failure
+        if: steps.run_tests.outcome == 'failure' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `❌ Tests Failed — ${new Date().toLocaleDateString('pt-BR')}`,
-              body: `Testes falharam em \`${new Date().toISOString()}\`\n\n**Suite:** ${{ github.event.inputs.test_suite || 'all' }}\n**Execução:** [Ver no GitHub Actions](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n**Relatório Allure:** https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/\n\nVerifique os artefatos da execução para detalhes.`,
+              title: `Tests Failed — ${new Date().toLocaleDateString('pt-BR')}`,
+              body: `Testes falharam em \`${new Date().toISOString()}\`\n\n**Suite:** ${{ github.event.inputs.test_suite || 'all' }}\n**Execucao:** [Ver no GitHub Actions](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n**Relatorio Allure:** https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/\n\nVerifique os artefatos da execucao para detalhes.`,
               labels: ['bug', 'automated-test']
             })
 
-      # ── 15. Mostrar URL do relatório ───────────────────────────────────────
-      - name: 🔗 Report URL
+      # ── 14. Mostrar URL do relatorio ───────────────────────────────────────
+      - name: Report URL
         if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
         run: |
-          echo "📊 Allure Report: https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/"
+          echo "Allure Report: https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/"
 
-      # ── 16. Cleanup ────────────────────────────────────────────────────────
-      - name: 🧹 Cleanup
+      # ── 15. Cleanup ────────────────────────────────────────────────────────
+      - name: Cleanup
         if: always()
+        env:
+          BOOKSHELF_API_PATH: ${{ github.workspace }}/bookshelf-api
+          BOOKSHELF_FRONTEND_PATH: ${{ github.workspace }}/bookshelf-frontend
+          RESULTS_PATH: ${{ github.workspace }}/robot-results
         run: docker compose -f docker-compose.yml down -v
 
-      # ── 17. Falhar o job se os testes falharam ─────────────────────────────
-      - name: ❌ Fail if tests failed
+      # ── 16. Falhar o job se os testes falharam ─────────────────────────────
+      - name: Fail if tests failed
         if: steps.run_tests.outcome == 'failure'
         run: exit 1
