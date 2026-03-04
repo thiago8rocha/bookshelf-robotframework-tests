@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [master, main]
 
-  # ── Disparo manual pelo GitHub UI ──────────────────────────────────────────
   workflow_dispatch:
     inputs:
       test_suite:
@@ -151,7 +150,7 @@ jobs:
       - name: Test Report Summary
         if: always()
         run: |
-          echo "## Resultados dos Testes" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
           if [ -f robot-results/output.xml ]; then
             python3 -c "
           import xml.etree.ElementTree as ET
@@ -161,20 +160,40 @@ jobs:
           failed = stats.get('fail', '0')
           skipped = stats.get('skip', '0')
           total = int(passed) + int(failed) + int(skipped)
-          print(f'| Total | Passou | Falhou | Pulou |')
+          print(f'| Total | Passed | Failed | Skipped |')
           print(f'|---|---|---|---|')
           print(f'| {total} | {passed} | {failed} | {skipped} |')
           " >> $GITHUB_STEP_SUMMARY
           else
-            echo "Arquivo de resultados nao encontrado" >> $GITHUB_STEP_SUMMARY
+            echo "Results file not found" >> $GITHUB_STEP_SUMMARY
           fi
 
-      # ── 9. Instalar Allure CLI (Node.js — sem Java) ───────────────────────
+      # ── 9. Instalar Allure CLI ────────────────────────────────────────────
       - name: Install Allure CLI
         if: always()
         run: npm install -g allure@latest
 
-      # ── 10. Gerar relatorio Allure ─────────────────────────────────────────
+      # ── 10. Restaurar histórico do Allure do gh-pages ─────────────────────
+      - name: Restore Allure history
+        if: always()
+        run: |
+          if git ls-remote --exit-code origin gh-pages > /dev/null 2>&1; then
+            git clone --depth=1 --branch gh-pages \
+              https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git \
+              gh-pages-branch
+            if [ -d "gh-pages-branch/allure-report/history" ]; then
+              cp -r gh-pages-branch/allure-report/history allure-results/history
+              echo "Allure history restored"
+            else
+              echo "No previous history found — first run"
+            fi
+            rm -rf gh-pages-branch
+          else
+            echo "gh-pages branch does not exist yet — first run"
+          fi
+        continue-on-error: true
+
+      # ── 11. Gerar relatorio Allure ────────────────────────────────────────
       - name: Generate Allure report
         if: always()
         run: |
@@ -187,7 +206,7 @@ jobs:
           fi
         continue-on-error: true
 
-      # ── 11. Deploy do Allure para GitHub Pages ─────────────────────────────
+      # ── 12. Deploy do Allure para GitHub Pages ────────────────────────────
       - name: Deploy Allure report to GitHub Pages
         if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
         uses: peaceiris/actions-gh-pages@v4
@@ -197,7 +216,7 @@ jobs:
           publish_branch: gh-pages
           destination_dir: allure-report
 
-      # ── 12. Artefatos ──────────────────────────────────────────────────────
+      # ── 13. Artefatos ─────────────────────────────────────────────────────
       - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v4
@@ -222,7 +241,7 @@ jobs:
           path: robot-results/
           retention-days: 14
 
-      # ── 13. Criar Issue em caso de falha ──────────────────────────────────
+      # ── 14. Criar Issue em caso de falha ──────────────────────────────────
       - name: Create Issue on failure
         if: steps.run_tests.outcome == 'failure' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         uses: actions/github-script@v7
@@ -232,17 +251,17 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Tests Failed — ${new Date().toLocaleDateString('pt-BR')}`,
-              body: `Testes falharam em \`${new Date().toISOString()}\`\n\n**Suite:** ${{ github.event.inputs.test_suite || 'all' }}\n**Execucao:** [Ver no GitHub Actions](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n**Relatorio Allure:** https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/\n\nVerifique os artefatos da execucao para detalhes.`,
+              body: `Tests failed at \`${new Date().toISOString()}\`\n\n**Suite:** ${{ github.event.inputs.test_suite || 'all' }}\n**Run:** [View on GitHub Actions](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n**Allure Report:** https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/\n\nCheck the run artifacts for details.`,
               labels: ['bug', 'automated-test']
             })
 
-      # ── 14. Mostrar URL do relatorio ───────────────────────────────────────
+      # ── 15. Mostrar URL do relatorio ──────────────────────────────────────
       - name: Report URL
         if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
         run: |
           echo "Allure Report: https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/"
 
-      # ── 15. Cleanup ────────────────────────────────────────────────────────
+      # ── 16. Cleanup ───────────────────────────────────────────────────────
       - name: Cleanup
         if: always()
         env:
@@ -251,7 +270,7 @@ jobs:
           RESULTS_PATH: ${{ github.workspace }}/robot-results
         run: docker compose -f docker-compose.yml down -v
 
-      # ── 16. Falhar o job se os testes falharam ─────────────────────────────
+      # ── 17. Falhar o job se os testes falharam ────────────────────────────
       - name: Fail if tests failed
         if: steps.run_tests.outcome == 'failure'
         run: exit 1
