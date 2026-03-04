@@ -79,3 +79,9 @@ Desktop.ini
 # ==========================================
 node_modules/
 package-lock.json
+# ==========================================
+# K6 / PERFORMANCE
+# ==========================================
+PIPE
+results/performance/
+*.json.gz

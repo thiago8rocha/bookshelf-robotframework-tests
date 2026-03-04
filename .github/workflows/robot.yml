@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       test_suite:
-        description: "Qual suite rodar?"
+        description: "Which suite to run?"
         required: true
         default: "all"
         type: choice
@@ -27,7 +27,7 @@ on:
           - fresh-user
           - negative
       extra_args:
-        description: "Argumentos extras do Robot (ex: --include login)"
+        description: "Extra Robot arguments (e.g: --include login)"
         required: false
         default: ""
 
