@@ -9,6 +9,7 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![CI](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 ![Allure](https://img.shields.io/badge/Allure%20Report-GitHub%20Pages-orange?style=for-the-badge)
+[![CI](https://github.com/thiago8rocha/bookshelf-robotframework-tests/actions/workflows/robot.yml/badge.svg)](https://github.com/thiago8rocha/bookshelf-robotframework-tests/actions/workflows/robot.yml)
 
 **Suite completa de testes automatizados para o sistema BookShelf**
 
