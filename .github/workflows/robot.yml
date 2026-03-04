@@ -182,7 +182,7 @@ jobs:
             npx allure generate --output allure-report allure-results --clean
             echo "Allure report generated successfully"
           else
-            echo "No Allure results found" 
+            echo "No Allure results found"
             mkdir -p allure-report
           fi
         continue-on-error: true
