@@ -62,11 +62,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # Volume de resultados — presente apenas quando a variável RESULTS_VOLUME estiver definida.
-    # Local: o Makefile seta RESULTS_VOLUME=./results:/app/results automaticamente.
-    # CI: a variável não é definida, então nenhum volume é montado.
+    # RESULTS_PATH aponta para onde os resultados serao salvos no host.
+    # Local (Makefile): ./results  ->  visivel em results/ no repositorio
+    # CI (workflow):    path absoluto do workspace  ->  copiado como artefato
     volumes:
-      - ${RESULTS_VOLUME:-/dev/null:/dev/null.ignore}
+      - ${RESULTS_PATH:-./results}:/app/results
     environment:
       - BROWSER=chromium
       - BASE_URL=http://frontend:5173
