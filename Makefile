@@ -13,7 +13,7 @@
 ##    make report            → abrir resultado no browser
 ## ─────────────────────────────────────────────────────────────────────────────
 
-COMPOSE        := docker compose -f docker-compose.local.yml
+COMPOSE        := RESULTS_VOLUME=./results:/app/results docker compose
 ROBOT_CMD      := python -m robot --listener allure_robotframework -d results
 APP_SERVICES   := database backend frontend
 
