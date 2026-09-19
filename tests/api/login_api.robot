@@ -251,10 +251,8 @@ Should Not Register With Existing Email
     Response Should Contain Key    ${resp}    error
 
 Should Not Register With Invalid Email Format
-    [Documentation]    API não valida formato de email no backend - apenas frontend
-    [Tags]    robot:skip    negative    api    auth    register    validation    email    ID=AUTH006
-
-    Skip    Backend não valida formato de email - validação ocorre apenas no frontend
+    [Documentation]    Backend rejeita formato de email inválido no cadastro
+    [Tags]    negative    api    auth    register    validation    email    ID=AUTH006
 
     ${body}=    Create Dictionary
     ...         name=Test User

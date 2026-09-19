@@ -1,13 +1,8 @@
 *** Settings ***
 Documentation    Testes de alteração de status de livros via UI
 ...
-...              NOTA: O frontend atual não expõe um controle de status
-...              (select/dropdown com data-testid=book-status-*) na lista de livros.
-...              A alteração de status existe na API mas não está implementada
-...              como elemento interativo na UI.
-...
-...              Estes testes estão marcados como skipped (robot:skip) e serão
-...              habilitados quando o frontend implementar o controle de status.
+...              O frontend expõe um select de status em cada card de livro
+...              (data-testid=book-status-<id>) com os valores to_read, reading e read.
 
 Resource    ../../../base/ui.resource
 Resource    ../../../resources/actions/login.resource
@@ -49,8 +44,7 @@ Get Stats Reading Count
 
 User Can Change Book Status To Reading
     [Documentation]    Usuário marca um livro como "Lendo" via UI
-    ...                SKIP: frontend não implementa select de status na lista de livros
-    [Tags]    positive    books    ui    status    robot:skip    ID=BSTAT001
+    [Tags]    positive    books    ui    status    ID=BSTAT001
 
     ${book}=    Generate Book With Required Fields Only
     User Creates Book    ${book}
@@ -65,8 +59,7 @@ User Can Change Book Status To Reading
 
 User Can Change Book Status To Read
     [Documentation]    Usuário marca um livro como "Lido"
-    ...                SKIP: frontend não implementa select de status na lista de livros
-    [Tags]    positive    books    ui    status    robot:skip    ID=BSTAT002
+    [Tags]    positive    books    ui    status    ID=BSTAT002
 
     ${book}=    Generate Book With Required Fields Only
     User Creates Book    ${book}
@@ -76,8 +69,7 @@ User Can Change Book Status To Read
 
 User Can Change Book Status Back To To Read
     [Documentation]    Usuário reverte um livro de "Lendo" para "Quero Ler"
-    ...                SKIP: frontend não implementa select de status na lista de livros
-    [Tags]    positive    books    ui    status    robot:skip    ID=BSTAT003
+    [Tags]    positive    books    ui    status    ID=BSTAT003
 
     ${book}=    Generate Book With Required Fields Only
     User Creates Book    ${book}
@@ -90,8 +82,7 @@ User Can Change Book Status Back To To Read
 
 Reading Stats Increment When Status Changes To Reading
     [Documentation]    O contador "Lendo" no dashboard incrementa quando status muda para reading
-    ...                SKIP: frontend não implementa select de status na lista de livros
-    [Tags]    positive    books    ui    status    statistics    robot:skip    ID=BSTAT004
+    [Tags]    positive    books    ui    status    statistics    ID=BSTAT004
 
     ${book1}=    Generate Book With Required Fields Only
     ${book2}=    Generate Book With Required Fields Only
@@ -111,8 +102,7 @@ Reading Stats Increment When Status Changes To Reading
 
 Reading Stats Decrement When Status Leaves Reading
     [Documentation]    O contador "Lendo" diminui quando o status sai de "reading"
-    ...                SKIP: frontend não implementa select de status na lista de livros
-    [Tags]    positive    books    ui    status    statistics    robot:skip    ID=BSTAT005
+    [Tags]    positive    books    ui    status    statistics    ID=BSTAT005
 
     ${book}=    Generate Book With Required Fields Only
     User Creates Book    ${book}
@@ -127,8 +117,7 @@ Reading Stats Decrement When Status Leaves Reading
 
 New Book Default Status Is To Read
     [Documentation]    Livro recém-criado tem status padrão "to_read" (Quero Ler)
-    ...                SKIP: frontend não implementa select de status na lista de livros
-    [Tags]    positive    books    ui    status    robot:skip    ID=BSTAT006
+    [Tags]    positive    books    ui    status    ID=BSTAT006
 
     ${book}=    Generate Book With Required Fields Only
     User Creates Book    ${book}
@@ -137,8 +126,7 @@ New Book Default Status Is To Read
 
 Status Change Persists After Page Reload
     [Documentation]    Alteração de status persiste após recarregar a página
-    ...                SKIP: frontend não implementa select de status na lista de livros
-    [Tags]    positive    books    ui    status    persistence    robot:skip    ID=BSTAT007
+    [Tags]    positive    books    ui    status    persistence    ID=BSTAT007
 
     ${book}=    Generate Book With Required Fields Only
     User Creates Book    ${book}
