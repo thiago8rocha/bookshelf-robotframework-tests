@@ -33,7 +33,7 @@ User Cannot Register With Existing Email
     Fill Register Email    ${USER_EMAIL}
     Fill Register Password    123456
     Click Register Button
-    Error Message Should Be Visible    já cadastrado
+    Error Message Should Be Visible    já está cadastrado
 
 User Cannot Register With Short Password
     [Documentation]    Senha com menos de 6 caracteres não completa o registro
