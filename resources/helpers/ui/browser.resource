@@ -10,7 +10,8 @@ Open Browser To URL
     [Arguments]    ${url}
     
     New Browser    chromium    headless=${HEADLESS}
-    New Context    viewport={'width': 1920, 'height': 1080}
+    # The suites assert pt-BR UI text; the app follows the browser language.
+    New Context    viewport={'width': 1920, 'height': 1080}    locale=pt-BR
     New Page    ${url}
 
 Wait For Page Ready
