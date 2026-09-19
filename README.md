@@ -139,7 +139,7 @@ Suite de testes automatizados desenvolvida com **Robot Framework** para validaç
 ### Pré-requisitos
 
 - Docker + Docker Compose
-- Repositórios `bookshelf-api` e `bookshelf-frontend` clonados na mesma pasta raiz
+- Repositórios [`bookshelf-api`](https://github.com/bookshelf-web/bookshelf-api) e [`bookshelf-frontend`](https://github.com/bookshelf-web/bookshelf-frontend) clonados na mesma pasta raiz
 
 ### Estrutura esperada de pastas
 
@@ -295,6 +295,13 @@ Na aba **Actions** do repositório, selecione **Robot Framework Tests** → **Ru
 | `performance-full` | Performance completa |
 | `smoke` | Apenas tag smoke |
 | `regression` | Apenas tag regression |
+
+### Disparo pelos repositórios da aplicação
+
+Os repositórios [bookshelf-api](https://github.com/bookshelf-web/bookshelf-api) e
+[bookshelf-frontend](https://github.com/bookshelf-web/bookshelf-frontend) têm o workflow **Run E2E Tests**
+(*Actions → Run E2E Tests → Run workflow*), que dispara esta suíte (e/ou a outra) sem abrir este repositório.
+Ele usa o secret `E2E_DISPATCH_TOKEN` (PAT com *Actions: read and write* neste repositório).
 
 ### Etapas do pipeline
 
