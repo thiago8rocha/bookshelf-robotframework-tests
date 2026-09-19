@@ -1,1 +1,1 @@
-{"id":"7efda8cd1d8865aa1b435b024bc73454","fullName":"Tests.Ui.Login.Logout.Token Is Removed From Browser After Logout","name":"Token Is Removed From Browser After Logout","status":"failed","testResultsByEnv":{"default":"ff308663731e42fe476b689fea53494f"}}
+{"id":"7efda8cd1d8865aa1b435b024bc73454","fullName":"Tests.Ui.Login.Logout.Token Is Removed From Browser After Logout","name":"Token Is Removed From Browser After Logout","status":"passed","testResultsByEnv":{"default":"18606dc0f4b742cf4a26b5706f0bd32c"}}

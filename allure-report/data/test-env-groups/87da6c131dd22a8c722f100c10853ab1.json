@@ -1,1 +1,1 @@
-{"id":"87da6c131dd22a8c722f100c10853ab1","fullName":"Tests.Ui.Login.Session.Session Should Be Cleared After Logout And Refresh","name":"Session Should Be Cleared After Logout And Refresh","status":"failed","testResultsByEnv":{"default":"f055736666f97e86cd53cd0548ec4f55"}}
+{"id":"87da6c131dd22a8c722f100c10853ab1","fullName":"Tests.Ui.Login.Session.Session Should Be Cleared After Logout And Refresh","name":"Session Should Be Cleared After Logout And Refresh","status":"passed","testResultsByEnv":{"default":"887dccfe67ed522604c6b89ce456aac4"}}
