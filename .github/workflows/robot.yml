@@ -48,13 +48,13 @@ jobs:
       - name: Checkout bookshelf-api
         uses: actions/checkout@v4
         with:
-          repository: thiago8rocha/bookshelf-api
+          repository: bookshelf-web/bookshelf-api
           path: bookshelf-api
 
       - name: Checkout bookshelf-frontend
         uses: actions/checkout@v4
         with:
-          repository: thiago8rocha/bookshelf-frontend
+          repository: bookshelf-web/bookshelf-frontend
           path: bookshelf-frontend
 
       # ── 2. Determinar argumentos do Robot ─────────────────────────────────
