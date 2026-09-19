@@ -1,1 +1,1 @@
-{"id":"aad89adca513d3b388cfa9b568367d0d","fullName":"Tests.Ui.Login.Register.User Cannot Register With Existing Email","name":"User Cannot Register With Existing Email","status":"failed","testResultsByEnv":{"default":"12faab7ce19d5ec796be0da2123143e3"}}
+{"id":"aad89adca513d3b388cfa9b568367d0d","fullName":"Tests.Ui.Login.Register.User Cannot Register With Existing Email","name":"User Cannot Register With Existing Email","status":"passed","testResultsByEnv":{"default":"61c928560a86f78b68d5dbd80591e028"}}
