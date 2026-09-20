@@ -1,1 +1,1 @@
-{"id":"a761350f4a9149a2419c6f39b5533f7d","fullName":"Tests.Ui.Books.Books Create.New User Can View Empty Book List","name":"New User Can View Empty Book List","status":"passed","testResultsByEnv":{"default":"aa16b5b116b0635d252a980e22044842"}}
+{"id":"a761350f4a9149a2419c6f39b5533f7d","fullName":"Tests.Ui.Books.Books Create.New User Can View Empty Book List","name":"New User Can View Empty Book List","status":"failed","testResultsByEnv":{"default":"5c976f60844a5b5edce45407adce11a2"}}
