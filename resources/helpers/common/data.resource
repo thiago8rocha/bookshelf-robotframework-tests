@@ -47,6 +47,8 @@ Generate New Book
     ${title}=       Set Variable    ${title} ${timestamp}
     ${author}=      FakerLibrary.Name
     ${isbn}=        FakerLibrary.Isbn13
+    # The API stores ISBNs normalized (digits only), so generate them that way.
+    ${isbn}=        Evaluate    $isbn.replace('-', '')
     ${publisher}=   FakerLibrary.Company
     ${year}=        Evaluate    random.randint(1900, 2024)
     ${pages}=       Evaluate    random.randint(50, 1200)
