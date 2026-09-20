@@ -114,6 +114,7 @@ New User Can View Empty Book List
     
     [Setup]    Setup Fresh User Test
     ${credentials}=    Create Fresh User And Login
+    Wait For Elements State    text=Carregando...    detached    timeout=10s
     
     ${page_content}=    Get Text    body
     Should Contain Any    ${page_content}
