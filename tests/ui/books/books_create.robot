@@ -32,7 +32,7 @@ Total Should Be Greater Than
     [Documentation]    Compara o total exibido nas estatisticas (que atualiza depois de salvar) com o valor inicial
     [Arguments]    ${initial}
     ${text}=    Get Text    data-testid=stats-total
-    ${matches}=    Get Regexp Matches    ${text}    (\d+)
+    ${matches}=    Get Regexp Matches    ${text}    (\\d+)
     ${current}=    Convert To Integer    ${matches}[0]
     Should Be True    ${current} > ${initial}
 
