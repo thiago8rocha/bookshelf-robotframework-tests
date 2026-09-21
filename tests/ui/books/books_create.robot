@@ -7,7 +7,15 @@ Resource    ../../../resources/actions/books.resource
 Resource    ../../../resources/helpers/common/data.resource
 
 Test Setup    Setup Book Creation Test
-Test Teardown    Teardown Book Creation Test
+Test Teardown    Total Should Be Greater Than
+    [Documentation]    Compara o total exibido nas estatisticas (que atualiza depois de salvar) com o valor inicial
+    [Arguments]    ${initial}
+    ${text}=    Get Text    data-testid=stats-total
+    ${matches}=    Get Regexp Matches    ${text}    (\d+)
+    ${current}=    Convert To Integer    ${matches}[0]
+    Should Be True    ${current} > ${initial}
+
+Teardown Book Creation Test
 
 *** Variables ***
 ${TEST_USER_TOKEN}    ${EMPTY}
@@ -87,13 +95,8 @@ Old User Can See Book Count In Statistics After Creating
     ${book}=    Generate New Book
     User Creates Book    ${book}
     
-    ${new_text}=    Get Text    data-testid=stats-total
-    ${matches}=    Get Regexp Matches    ${new_text}    (\\d+)
-    ${new_count}=    Set Variable    ${matches}[0]
-    
     ${initial_int}=    Convert To Integer    ${initial_count}
-    ${new_int}=    Convert To Integer    ${new_count}
-    Should Be True    ${new_int} > ${initial_int}
+    Wait Until Keyword Succeeds    10s    500ms    Total Should Be Greater Than    ${initial_int}
 
 Old User Can View Book List After Creating Multiple Books
     [Documentation]    Valida que múltiplos livros criados aparecem na lista
