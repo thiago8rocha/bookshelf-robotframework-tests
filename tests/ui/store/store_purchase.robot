@@ -13,7 +13,7 @@ Test Teardown    Teardown UI Test
 Log In As Buyer
     [Documentation]    Cria um comprador que também é leitor (para cair no dashboard) e entra pela tela de login
     ${buyer}=    Register User With Roles    reader    buyer
-    Login With Credentials    ${buyer}[email]    ${buyer}[password]
+    login.Login With Credentials    ${buyer}[email]    ${buyer}[password]
     RETURN    ${buyer}
 
 Add Listing To Cart
