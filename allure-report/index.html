@@ -55,7 +55,7 @@
 
     
     <script>
-      window.allureReportOptions = {"id":"awesome","reportName":"Allure Report","logo":"","theme":"auto","reportLanguage":"en","createdAt":1793842280054,"reportUuid":"5b371da2-6782-41e2-a6fd-6c7f7ffb0442","groupBy":[],"cacheKey":"1793842280054","ci":{"type":"github","detected":true,"repoName":"bookshelf-robotframework-tests","jobUid":"thiago8rocha/bookshelf-robotframework-tests_Robot Framework Tests","jobUrl":"https://github.com/thiago8rocha/bookshelf-robotframework-tests/actions?query=workflow%3A%22Robot%20Framework%20Tests%22","jobName":"thiago8rocha/bookshelf-robotframework-tests - Robot Framework Tests","pipelineRunName":"Robot Framework Tests","pipelineRunUrl":"https://github.com/thiago8rocha/bookshelf-robotframework-tests/actions/runs/41947778118","jobRunUid":"41947778118","jobRunUrl":"https://github.com/thiago8rocha/bookshelf-robotframework-tests/actions/runs/41947778118","jobRunName":"test #62","jobRunBranch":"master","pullRequestUrl":"","pullRequestName":"","commitSha":"e10033d708d5ce524baf4338dfc472eade4c8e8f","provider":"github","repository":{"slug":"thiago8rocha/bookshelf-robotframework-tests","url":"https://github.com/thiago8rocha/bookshelf-robotframework-tests"},"sourceBranch":"master"},"git":{"commit":"e10033d708d5ce524baf4338dfc472eade4c8e8f","branch":"master"},"runSummary":{"start":1793841850028,"stop":1793842269322,"duration":419294},"runSummaryByEnv":{"default":{"start":1793841850028,"stop":1793842269322,"duration":419294}},"layout":"base","allureVersion":"3.22.1","sections":["charts","timeline"],"defaultSection":""}
+      window.allureReportOptions = {"id":"awesome","reportName":"Allure Report","logo":"","theme":"auto","reportLanguage":"en","createdAt":1793910252918,"reportUuid":"7326685e-2e1e-4e64-8747-aa996457e593","groupBy":[],"cacheKey":"1793910252918","ci":{"type":"github","detected":true,"repoName":"bookshelf-robotframework-tests","jobUid":"thiago8rocha/bookshelf-robotframework-tests_Robot Framework Tests","jobUrl":"https://github.com/thiago8rocha/bookshelf-robotframework-tests/actions?query=workflow%3A%22Robot%20Framework%20Tests%22","jobName":"thiago8rocha/bookshelf-robotframework-tests - Robot Framework Tests","pipelineRunName":"Robot Framework Tests","pipelineRunUrl":"https://github.com/thiago8rocha/bookshelf-robotframework-tests/actions/runs/42101307480","jobRunUid":"42101307480","jobRunUrl":"https://github.com/thiago8rocha/bookshelf-robotframework-tests/actions/runs/42101307480","jobRunName":"test #63","jobRunBranch":"master","pullRequestUrl":"","pullRequestName":"","commitSha":"e10033d708d5ce524baf4338dfc472eade4c8e8f","provider":"github","repository":{"slug":"thiago8rocha/bookshelf-robotframework-tests","url":"https://github.com/thiago8rocha/bookshelf-robotframework-tests"},"sourceBranch":"master"},"git":{"commit":"e10033d708d5ce524baf4338dfc472eade4c8e8f","branch":"master"},"runSummary":{"start":1793909827639,"stop":1793910243189,"duration":415550},"runSummaryByEnv":{"default":{"start":1793909827639,"stop":1793910243189,"duration":415550}},"layout":"base","allureVersion":"3.33.0","sections":["charts","timeline"],"defaultSection":""}
     </script>
 </head>
 <body>
@@ -68,8 +68,9 @@
     <div id="app"></div>
     
     <script>
-      const { origin, pathname } = window.location; 
-      const url = new URL(pathname, origin);
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.hash = "";
       const baseEl = document.createElement("base");
       
       baseEl.href = url.toString();
@@ -80,7 +81,7 @@
     <script>
       window.allure = window.allure || {};
     </script>
-    <script   src="app-1cf27b2f4f66161c2cd6.js"></script>
+    <script   src="app-189f0a86432a713a6a0d.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LNDJ3J7WT0"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -88,8 +89,8 @@
         gtag('js', new Date());
         gtag('config', 'G-LNDJ3J7WT0', {
           "report": "awesome",
-          "allureVersion": "3.22.1",
-          "reportUuid": "5b371da2-6782-41e2-a6fd-6c7f7ffb0442",
+          "allureVersion": "3.33.0",
+          "reportUuid": "7326685e-2e1e-4e64-8747-aa996457e593",
           "single_file": ""
         });
     </script>
