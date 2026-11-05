@@ -28,10 +28,10 @@ Useful options: `--include smoke`, `--exclude slow`, `--variable HEADLESS:False`
 
 ## CI
 
-Workflow "Robot Framework Tests" (`.github/workflows/robot.yml`) runs on push and pull request to `master` or `main`.
+Workflow "Robot Framework Tests" (`.github/workflows/robot.yml`) runs on push and pull request to `master`.
 Manual run: Actions, Robot Framework Tests, Run workflow, choose `test_suite`
 (`all`, `all-full`, `api`, `ui`, `e2e`, `performance`, `performance-full`, `smoke`, `regression`, `fresh-user`, `negative`)
 and optional `extra_args` such as `--include login`. The API and frontend repos can dispatch it from their "Run E2E Tests" workflow.
 
 Results: Allure on GitHub Pages and the `allure-results`, `allure-report` and `robot-html-report` artifacts.
-A failure on `master` or `main` opens an issue.
+A failure on `master` opens an issue.

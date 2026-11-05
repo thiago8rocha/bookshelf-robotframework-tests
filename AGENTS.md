@@ -54,10 +54,10 @@ and `BROWSER` are read from the environment, and `HEADLESS` is a Robot variable 
 
 ## CI
 
-`.github/workflows/robot.yml` runs on push and pull request to `master` or `main`, and on manual dispatch with `test_suite`
+`.github/workflows/robot.yml` runs on push and pull request to `master`, and on manual dispatch with `test_suite`
 (`all`, `all-full`, `api`, `ui`, `e2e`, `performance`, `performance-full`, `smoke`, `regression`, `fresh-user`, `negative`)
 and `extra_args`. It checks out `bookshelf-web/bookshelf-api` and `bookshelf-web/bookshelf-frontend`, runs the compose stack,
-publishes Allure to GitHub Pages and opens an issue when tests fail on `master`/`main`.
+publishes Allure to GitHub Pages and opens an issue when tests fail on `master`.
 
 Artifacts: `allure-results`, `allure-report`, `robot-html-report`. The "Run E2E Tests" workflow in the API and frontend repos
 can dispatch it (secret `E2E_DISPATCH_TOKEN`).

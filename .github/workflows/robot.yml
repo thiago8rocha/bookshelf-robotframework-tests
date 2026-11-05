@@ -2,11 +2,11 @@ name: Robot Framework Tests
 
 on:
   push:
-    branches: [master, main]
+    branches: [master]
   pull_request:
-    branches: [master, main]
+    branches: [master]
   schedule:
-    # The suite runs against the latest main of both app repos, so it must run
+    # The suite runs against the latest master of both app repos, so it must run
     # even when this repo has no pushes. 09:30 Brasília, Monday to Friday.
     - cron: '30 12 * * 1-5'
 
@@ -213,7 +213,7 @@ jobs:
 
       # ── 12. Deploy do Allure para GitHub Pages ────────────────────────────
       - name: Deploy Allure report to GitHub Pages
-        if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+        if: always() && github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -248,7 +248,7 @@ jobs:
 
       # ── 14. Criar Issue em caso de falha ──────────────────────────────────
       - name: Create Issue on failure
-        if: steps.run_tests.outcome == 'failure' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        if: steps.run_tests.outcome == 'failure' && github.ref == 'refs/heads/master'
         uses: actions/github-script@v7
         with:
           script: |
@@ -262,7 +262,7 @@ jobs:
 
       # ── 15. Mostrar URL do relatorio ──────────────────────────────────────
       - name: Report URL
-        if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+        if: always() && github.ref == 'refs/heads/master'
         run: |
           echo "Allure Report: https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/"
 

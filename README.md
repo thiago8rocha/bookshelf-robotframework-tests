@@ -249,7 +249,7 @@ Após rodar os testes, os arquivos são gerados em `results/`:
 make report   # abre results/log.html no browser
 ```
 
-No CI, o **Allure Report** é gerado automaticamente e publicado no GitHub Pages após cada execução na branch `main`.
+No CI, o **Allure Report** é gerado automaticamente e publicado no GitHub Pages após cada execução na branch `master`.
 
 📊 **[Ver Allure Report](https://thiago8rocha.github.io/bookshelf-robotframework-tests/allure-report/)**
 
@@ -277,7 +277,7 @@ No CI, o **Allure Report** é gerado automaticamente e publicado no GitHub Pages
 ## CI/CD
 
 O pipeline está configurado em `.github/workflows/robot.yml` e é acionado em:
-- **Push ou Pull Request** para `main` / `master`
+- **Push ou Pull Request** para `master`
 - **Disparo manual** via `workflow_dispatch` no GitHub Actions
 
 ### Disparo manual
