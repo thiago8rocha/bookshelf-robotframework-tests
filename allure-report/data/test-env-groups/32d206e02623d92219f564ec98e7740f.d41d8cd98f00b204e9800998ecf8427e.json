@@ -1,1 +1,1 @@
-{"id":"32d206e02623d92219f564ec98e7740f.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Not Update Book With Duplicate ISBN","name":"Should Not Update Book With Duplicate ISBN","status":"passed","testResultsByEnv":{"default":"aeb4fda13ea7b4907374e551819e807a"}}
+{"id":"32d206e02623d92219f564ec98e7740f.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Not Update Book With Duplicate ISBN","name":"Should Not Update Book With Duplicate ISBN","status":"failed","testResultsByEnv":{"default":"9097072106ff0431cabc0def23eda1de"}}

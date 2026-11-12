@@ -1,1 +1,1 @@
-{"id":"d2c2c09e20e4055d8138a2e1348573ee.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Status.User Can Change Book Status To Read","name":"User Can Change Book Status To Read","status":"passed","testResultsByEnv":{"default":"da47e1a620aca41280f77af56089026a"}}
+{"id":"d2c2c09e20e4055d8138a2e1348573ee.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Status.User Can Change Book Status To Read","name":"User Can Change Book Status To Read","status":"failed","testResultsByEnv":{"default":"d880d5c3704e71b572a9f909168867b1"}}

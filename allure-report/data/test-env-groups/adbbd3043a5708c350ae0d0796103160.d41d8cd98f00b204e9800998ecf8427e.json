@@ -1,1 +1,1 @@
-{"id":"adbbd3043a5708c350ae0d0796103160.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Reject Access Without Authentication","name":"Should Reject Access Without Authentication","status":"passed","testResultsByEnv":{"default":"8e57302190b6892a1a1710705478aa7c"}}
+{"id":"adbbd3043a5708c350ae0d0796103160.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Reject Access Without Authentication","name":"Should Reject Access Without Authentication","status":"failed","testResultsByEnv":{"default":"7ea6e9f806f53790dabebd3b8eb7ef33"}}

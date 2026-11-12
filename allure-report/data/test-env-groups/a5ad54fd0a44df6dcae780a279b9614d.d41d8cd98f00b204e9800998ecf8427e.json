@@ -1,1 +1,1 @@
-{"id":"a5ad54fd0a44df6dcae780a279b9614d.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Get Book Statistics","name":"Should Get Book Statistics","status":"passed","testResultsByEnv":{"default":"36d19f1d4912816eb42c642b06207035"}}
+{"id":"a5ad54fd0a44df6dcae780a279b9614d.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Get Book Statistics","name":"Should Get Book Statistics","status":"failed","testResultsByEnv":{"default":"7bf2dc16abe2b32814c89d6fb0e592f5"}}

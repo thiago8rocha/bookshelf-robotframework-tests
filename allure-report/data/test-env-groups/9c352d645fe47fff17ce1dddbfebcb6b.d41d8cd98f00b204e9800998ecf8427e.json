@@ -1,1 +1,1 @@
-{"id":"9c352d645fe47fff17ce1dddbfebcb6b.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Accessibility.Wcag.Register Page Should Be Accessible","name":"Register Page Should Be Accessible","status":"passed","testResultsByEnv":{"default":"6331cff097e6c2a81b19bdf7b747feb6"}}
+{"id":"9c352d645fe47fff17ce1dddbfebcb6b.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Accessibility.Wcag.Register Page Should Be Accessible","name":"Register Page Should Be Accessible","status":"failed","testResultsByEnv":{"default":"777137193abf5367d4264a9485886ba3"}}

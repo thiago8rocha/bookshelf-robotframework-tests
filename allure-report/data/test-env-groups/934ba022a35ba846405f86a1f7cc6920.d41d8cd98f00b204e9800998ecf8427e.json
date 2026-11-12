@@ -1,1 +1,1 @@
-{"id":"934ba022a35ba846405f86a1f7cc6920.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Create Book With Valid Data","name":"Should Create Book With Valid Data","status":"passed","testResultsByEnv":{"default":"a3baff97b33f45296284592bab7c4eaf"}}
+{"id":"934ba022a35ba846405f86a1f7cc6920.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Create Book With Valid Data","name":"Should Create Book With Valid Data","status":"failed","testResultsByEnv":{"default":"9dc1921b1b8b8527980b2c37f7e66aad"}}

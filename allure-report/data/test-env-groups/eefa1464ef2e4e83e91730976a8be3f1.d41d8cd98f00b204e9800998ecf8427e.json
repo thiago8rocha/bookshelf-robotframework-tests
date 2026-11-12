@@ -1,1 +1,1 @@
-{"id":"eefa1464ef2e4e83e91730976a8be3f1.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Delete.Statistics Should Update After Deletion","name":"Statistics Should Update After Deletion","status":"passed","testResultsByEnv":{"default":"83e0f28c0241c94645313640b4aed7b8"}}
+{"id":"eefa1464ef2e4e83e91730976a8be3f1.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Delete.Statistics Should Update After Deletion","name":"Statistics Should Update After Deletion","status":"failed","testResultsByEnv":{"default":"2fadc4a23e6ee50dbf5dfd97dcd46b87"}}

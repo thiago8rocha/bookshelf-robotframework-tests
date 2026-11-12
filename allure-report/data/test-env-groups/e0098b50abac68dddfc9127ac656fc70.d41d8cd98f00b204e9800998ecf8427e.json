@@ -1,1 +1,1 @@
-{"id":"e0098b50abac68dddfc9127ac656fc70.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Different Users Should Have Different Tokens","name":"Different Users Should Have Different Tokens","status":"passed","testResultsByEnv":{"default":"2dad4c027b360922f55a6fe5c726cff9"}}
+{"id":"e0098b50abac68dddfc9127ac656fc70.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Different Users Should Have Different Tokens","name":"Different Users Should Have Different Tokens","status":"failed","testResultsByEnv":{"default":"fdc449ceb93330408311e05aff5fa5a5"}}

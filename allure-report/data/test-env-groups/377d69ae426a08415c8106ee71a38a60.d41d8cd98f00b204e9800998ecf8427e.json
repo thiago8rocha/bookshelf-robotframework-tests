@@ -1,1 +1,1 @@
-{"id":"377d69ae426a08415c8106ee71a38a60.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Should Not Register With Existing Email","name":"Should Not Register With Existing Email","status":"passed","testResultsByEnv":{"default":"1186886a41e84e48e3109d3bbfb239e1"}}
+{"id":"377d69ae426a08415c8106ee71a38a60.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Should Not Register With Existing Email","name":"Should Not Register With Existing Email","status":"failed","testResultsByEnv":{"default":"cf6e7d08b7618e9797b8ad1133dc2772"}}

@@ -1,1 +1,1 @@
-{"id":"2ec6a0f4d5739bda161a59e8da3957b3.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Delete.User Can Delete Book","name":"User Can Delete Book","status":"passed","testResultsByEnv":{"default":"28866f3af9c1c1dde51e5925d755d071"}}
+{"id":"2ec6a0f4d5739bda161a59e8da3957b3.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Delete.User Can Delete Book","name":"User Can Delete Book","status":"failed","testResultsByEnv":{"default":"9a733a6005157f3d1f1e627230d3da25"}}

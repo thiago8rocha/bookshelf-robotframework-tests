@@ -1,1 +1,1 @@
-{"id":"3bfaf1d241f7cb00ba80b08ce65421b2.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Delete.User Can Cancel Book Deletion","name":"User Can Cancel Book Deletion","status":"passed","testResultsByEnv":{"default":"995ac0757030f8f8f80c7ba7106a37a8"}}
+{"id":"3bfaf1d241f7cb00ba80b08ce65421b2.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Delete.User Can Cancel Book Deletion","name":"User Can Cancel Book Deletion","status":"failed","testResultsByEnv":{"default":"e0eb37ceef854f3dd3375bed30ec7b95"}}

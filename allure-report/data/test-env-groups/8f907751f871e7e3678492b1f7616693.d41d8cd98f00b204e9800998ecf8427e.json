@@ -1,1 +1,1 @@
-{"id":"8f907751f871e7e3678492b1f7616693.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Marketplace Api.Seller Cannot Buy Their Own Listing","name":"Seller Cannot Buy Their Own Listing","status":"passed","testResultsByEnv":{"default":"9263b5149bb3d9829ec13bfe3916cbcb"}}
+{"id":"8f907751f871e7e3678492b1f7616693.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Marketplace Api.Seller Cannot Buy Their Own Listing","name":"Seller Cannot Buy Their Own Listing","status":"failed","testResultsByEnv":{"default":"91c53a512c06f982212251e37a70792b"}}

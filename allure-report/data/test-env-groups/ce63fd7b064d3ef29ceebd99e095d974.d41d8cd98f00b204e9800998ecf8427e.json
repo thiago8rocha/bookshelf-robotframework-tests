@@ -1,1 +1,1 @@
-{"id":"ce63fd7b064d3ef29ceebd99e095d974.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Statistics Should Reflect Book Count","name":"Statistics Should Reflect Book Count","status":"passed","testResultsByEnv":{"default":"d7bd2a6568bb6d1c2f2c5ae2fe98c086"}}
+{"id":"ce63fd7b064d3ef29ceebd99e095d974.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Statistics Should Reflect Book Count","name":"Statistics Should Reflect Book Count","status":"failed","testResultsByEnv":{"default":"7e6584624a6cebd55a1cace4329925c9"}}

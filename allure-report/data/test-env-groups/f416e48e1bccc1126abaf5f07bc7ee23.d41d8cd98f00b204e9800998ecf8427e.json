@@ -1,1 +1,1 @@
-{"id":"f416e48e1bccc1126abaf5f07bc7ee23.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Register Token Should Have JWT Format","name":"Register Token Should Have JWT Format","status":"passed","testResultsByEnv":{"default":"e8216c49a914766edd1ad43bfdd3ac0b"}}
+{"id":"f416e48e1bccc1126abaf5f07bc7ee23.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Register Token Should Have JWT Format","name":"Register Token Should Have JWT Format","status":"failed","testResultsByEnv":{"default":"850ce41398b2eb2249575388f4f76309"}}

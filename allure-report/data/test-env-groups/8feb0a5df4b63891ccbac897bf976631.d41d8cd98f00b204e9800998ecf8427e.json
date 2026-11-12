@@ -1,1 +1,1 @@
-{"id":"8feb0a5df4b63891ccbac897bf976631.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Accessibility.Wcag.Dashboard Should Be Accessible","name":"Dashboard Should Be Accessible","status":"passed","testResultsByEnv":{"default":"bd30b37da08776540c565ffaae8b73b3"}}
+{"id":"8feb0a5df4b63891ccbac897bf976631.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Accessibility.Wcag.Dashboard Should Be Accessible","name":"Dashboard Should Be Accessible","status":"failed","testResultsByEnv":{"default":"11f9ca0ca9875e8f526c8e7e1bf731e8"}}

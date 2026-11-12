@@ -1,1 +1,1 @@
-{"id":"a8952d1cbec00ff1e4e97e6a329c3bd5.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should List Books With Authentication","name":"Should List Books With Authentication","status":"passed","testResultsByEnv":{"default":"d4d28687d11fafa4fd69b6f39d9c7bea"}}
+{"id":"a8952d1cbec00ff1e4e97e6a329c3bd5.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should List Books With Authentication","name":"Should List Books With Authentication","status":"failed","testResultsByEnv":{"default":"9a87fbe2f1b0a26dcf052ca3204b4f31"}}

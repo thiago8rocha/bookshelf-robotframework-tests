@@ -1,1 +1,1 @@
-{"id":"308b710c997ac9098e7402c4dff8d49e.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Status.Status Change Persists After Page Reload","name":"Status Change Persists After Page Reload","status":"passed","testResultsByEnv":{"default":"7f62cc8f706ad0e37d4347dd0f78010b"}}
+{"id":"308b710c997ac9098e7402c4dff8d49e.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Books.Books Status.Status Change Persists After Page Reload","name":"Status Change Persists After Page Reload","status":"failed","testResultsByEnv":{"default":"731bb853e3d5bd4f483e847bb50eb5d0"}}
