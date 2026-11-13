@@ -1,1 +1,1 @@
-{"id":"b928292a0b48c4e85eeb64dba71a509a.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Login.Register.User Cannot Register With Empty Fields","name":"User Cannot Register With Empty Fields","status":"failed","testResultsByEnv":{"default":"b6a5175bec1eb8a687eaa0f7eacc48c8"}}
+{"id":"b928292a0b48c4e85eeb64dba71a509a.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Ui.Login.Register.User Cannot Register With Empty Fields","name":"User Cannot Register With Empty Fields","status":"passed","testResultsByEnv":{"default":"186617e9a27968d27c275f2996a4e436"}}
