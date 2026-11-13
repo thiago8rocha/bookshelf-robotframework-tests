@@ -29,7 +29,7 @@ export function setup() {
 
     const res = http.post(
         `${API_URL}/api/auth/register`,
-        JSON.stringify({ name: 'Perf Auth User', email, password }),
+        JSON.stringify({ name: 'Perf Auth User', email, password, acceptTerms: true }),
         { headers: { 'Content-Type': 'application/json' } }
     );
 

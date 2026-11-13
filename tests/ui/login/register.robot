@@ -20,8 +20,8 @@ User Can Register With Valid Data
     Navigate To Register Page
     Fill Register Name    Test User
     Fill Register Email    ${email}
-    Fill Register Password    123456
-    Click Register Button
+    Fill Register Password    Test@123456
+    Submit Registration
     Register Should Be Successful
 
 User Cannot Register With Existing Email
@@ -31,13 +31,13 @@ User Cannot Register With Existing Email
     Navigate To Register Page
     Fill Register Name    Test User
     Fill Register Email    ${USER_EMAIL}
-    Fill Register Password    123456
-    Click Register Button
+    Fill Register Password    Test@123456
+    Submit Registration
     Error Message Should Be Visible    já está cadastrado
 
 User Cannot Register With Short Password
-    [Documentation]    Senha com menos de 6 caracteres não completa o registro
-    ...                O browser bloqueia via atributo minlength=6 no input
+    [Documentation]    Senha com menos de 8 caracteres não avança para o último passo
+    ...                O browser bloqueia via atributo minlength=8 no input
     [Tags]    negative    auth    ui    validation    ID=REGISTER003
     
     ${email}=    Generate Random Email
@@ -45,7 +45,7 @@ User Cannot Register With Short Password
     Fill Register Name      Test User
     Fill Register Email     ${email}
     Fill Register Password  123
-    Click Register Button
+    Click Register Next Button
     
     ${dashboard_visible}=    Run Keyword And Return Status
     ...    Wait For Elements State    data-testid=dashboard-page    visible    timeout=2s
@@ -60,7 +60,7 @@ User Cannot Register With Empty Fields
     [Tags]    negative    auth    ui    validation    ID=REGISTER004
     
     Navigate To Register Page
-    Click Register Button
+    Click Register Next Button
     
     ${dashboard_visible}=    Run Keyword And Return Status
     ...    Wait For Elements State    data-testid=dashboard-page    visible    timeout=2s
@@ -68,3 +68,32 @@ User Cannot Register With Empty Fields
     
     ${url}=    Get Url
     Should Contain    ${url}    /register
+
+User Cannot Submit Registration Without Accepting The Terms
+    [Documentation]    The sign-up button stays disabled until the terms are accepted
+    [Tags]    negative    auth    ui    terms    regression    ID=REGISTER005
+
+    ${email}=    Generate Random Email
+    Navigate To Register Page
+    Fill Register Name      Test User
+    Fill Register Email     ${email}
+    Fill Register Password  Test@123456
+    Click Register Next Button
+    Wait For Elements State    data-testid=register-button    disabled
+    Accept Terms And Conditions
+    Wait For Elements State    data-testid=register-button    enabled
+
+User Can Go Back To The Account Step Keeping The Data
+    [Documentation]    Going back from the usage step keeps what was typed in the account step
+    [Tags]    positive    auth    ui    regression    ID=REGISTER006
+
+    ${email}=    Generate Random Email
+    Navigate To Register Page
+    Fill Register Name      Test User
+    Fill Register Email     ${email}
+    Fill Register Password  Test@123456
+    Click Register Next Button
+    Wait For Elements State    data-testid=register-roles    visible
+    Click Register Back Button
+    Get Property    data-testid=name-input     value    ==    Test User
+    Get Property    data-testid=email-input    value    ==    ${email}

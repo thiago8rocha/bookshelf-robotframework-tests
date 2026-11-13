@@ -96,6 +96,7 @@ Create User Via API
     ...         name=${credentials}[name]
     ...         email=${credentials}[email]
     ...         password=${credentials}[password]
+    ...         acceptTerms=${True}
     
     ${resp}=    POST On Session    api_setup
     ...         /api/auth/register
@@ -148,6 +149,10 @@ Create Fresh User
     Fill Text    data-testid=email-input      ${credentials}[email]
     Fill Text    data-testid=password-input   ${credentials}[password]
     
+    Click    data-testid=register-next-button
+    Wait For Elements State    data-testid=accept-terms-checkbox    visible    timeout=5s
+    Check Checkbox    data-testid=accept-terms-checkbox
+
     Wait For Elements State    data-testid=register-button    enabled    timeout=5s
     Click    data-testid=register-button
     

@@ -23,6 +23,7 @@ Create Test User And Get Token
     ...    name=Test User
     ...    email=${email}
     ...    password=${TEST_USER_PASS}
+    ...    acceptTerms=${True}
     
     ${resp}=    POST On Session    bookshelf_api    /api/auth/register    json=${body}    expected_status=any
     

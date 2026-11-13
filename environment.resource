@@ -19,7 +19,7 @@ ${TIMEOUT}          10s
 # TEST DATA
 # ==========================================
 ${USER_EMAIL}       test@email.com
-${USER_PASS}        123456
+${USER_PASS}        Test@123456
 ${TEST_USER_PASS}   test123456
 
 # ==========================================

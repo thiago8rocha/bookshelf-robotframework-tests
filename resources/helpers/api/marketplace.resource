@@ -14,6 +14,7 @@ Register User With Roles
     ...    email=${credentials}[email]
     ...    password=${credentials}[password]
     ...    roles=${roles}
+    ...    acceptTerms=${True}
     ${resp}=    POST Endpoint    /api/auth/register    ${body}
     Response Status Should Be    ${resp}    201
     ${account}=    Create Dictionary

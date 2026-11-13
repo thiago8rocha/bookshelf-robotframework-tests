@@ -33,6 +33,27 @@ Click Register Button
     Wait For Elements State    data-testid=register-button    visible
     Click    data-testid=register-button
 
+Click Register Next Button
+    [Documentation]    Avança do passo da conta para o passo de uso e termos
+    Wait For Elements State    data-testid=register-next-button    visible
+    Click    data-testid=register-next-button
+
+Click Register Back Button
+    [Documentation]    Volta do passo de uso e termos para o passo da conta
+    Wait For Elements State    data-testid=register-back-button    visible
+    Click    data-testid=register-back-button
+
+Accept Terms And Conditions
+    [Documentation]    Marca o aceite dos Termos de Serviço e da Política de Privacidade
+    Wait For Elements State    data-testid=accept-terms-checkbox    visible    timeout=5s
+    Check Checkbox    data-testid=accept-terms-checkbox
+
+Submit Registration
+    [Documentation]    Avança para o último passo, aceita os termos e envia o cadastro
+    Click Register Next Button
+    Accept Terms And Conditions
+    Click Register Button
+
 Register Should Be Successful
     [Documentation]    Valida redirecionamento para dashboard
     Wait For Elements State    data-testid=dashboard-page    visible    timeout=10s

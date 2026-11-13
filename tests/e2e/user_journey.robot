@@ -28,7 +28,7 @@ Complete User Journey: Register, Manage Books And Logout
     Fill Register Name      ${credentials}[name]
     Fill Register Email     ${credentials}[email]
     Fill Register Password  ${credentials}[password]
-    Click Register Button
+    Submit Registration
     Register Should Be Successful
 
     # 2. Dashboard acessível sem login adicional
@@ -97,7 +97,7 @@ Users Have Isolated Data
     Fill Register Name      ${user_b}[name]
     Fill Register Email     ${user_b}[email]
     Fill Register Password  ${user_b}[password]
-    Click Register Button
+    Submit Registration
     Register Should Be Successful
 
     # B não vê nada do A
@@ -152,7 +152,7 @@ Register Authenticates User Automatically
     Fill Register Name      ${credentials}[name]
     Fill Register Email     ${credentials}[email]
     Fill Register Password  ${credentials}[password]
-    Click Register Button
+    Submit Registration
 
     # Vai direto para o dashboard — sem etapa de login
     Wait For Elements State    data-testid=dashboard-page    visible    timeout=15s

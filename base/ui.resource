@@ -15,7 +15,7 @@ Resource    ../resources/helpers/common/data.resource
 *** Keywords ***
 
 Ensure Default User Exists
-    [Documentation]    Garante que o usuário padrão (test@email.com / 123456) existe
+    [Documentation]    Garante que o usuário padrão (test@email.com / Test@123456) existe
     ...                e está funcional no banco antes dos testes de UI rodarem.
     ...                Verifica primeiro via login para evitar erro 409 no backend
     ...                quando o usuário já foi criado por uma suite anterior.

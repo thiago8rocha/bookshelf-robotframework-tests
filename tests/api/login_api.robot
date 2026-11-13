@@ -18,6 +18,7 @@ Should Register New User Successfully
     ...         name=${credentials}[name]
     ...         email=${credentials}[email]
     ...         password=${credentials}[password]
+    ...         acceptTerms=${True}
     
     ${resp}=    POST On Session    bookshelf_api
     ...         /api/auth/register
@@ -52,6 +53,7 @@ Register Token Should Have JWT Format
     ...         name=${credentials}[name]
     ...         email=${credentials}[email]
     ...         password=${credentials}[password]
+    ...         acceptTerms=${True}
 
     ${resp}=    POST On Session    bookshelf_api
     ...         /api/auth/register
@@ -75,6 +77,7 @@ Should Not Register With Short Password
     ...         name=Test User
     ...         email=${email}
     ...         password=abc
+    ...         acceptTerms=${True}
 
     ${resp}=    POST On Session    bookshelf_api
     ...         /api/auth/register
@@ -229,6 +232,7 @@ Should Not Register With Existing Email
     ...          name=${credentials}[name]
     ...          email=${credentials}[email]
     ...          password=${credentials}[password]
+    ...          acceptTerms=${True}
     
     POST On Session    bookshelf_api
     ...    /api/auth/register
@@ -239,6 +243,7 @@ Should Not Register With Existing Email
     ...          name=Another Name
     ...          email=${credentials}[email]
     ...          password=AnotherPass123!
+    ...          acceptTerms=${True}
     
     ${resp}=    POST On Session    bookshelf_api
     ...         /api/auth/register
@@ -258,6 +263,7 @@ Should Not Register With Invalid Email Format
     ...         name=Test User
     ...         email=invalid-email-format
     ...         password=Test123456!
+    ...         acceptTerms=${True}
     
     ${resp}=    POST On Session    bookshelf_api
     ...         /api/auth/register
@@ -273,6 +279,7 @@ Should Not Register Without Email
     ${body}=    Create Dictionary
     ...         name=Test User
     ...         password=Test123456!
+    ...         acceptTerms=${True}
     
     ${resp}=    POST On Session    bookshelf_api
     ...         /api/auth/register
@@ -289,6 +296,7 @@ Should Not Register Without Password
     ${body}=     Create Dictionary
     ...          name=Test User
     ...          email=${email}
+    ...          acceptTerms=${True}
     
     ${resp}=    POST On Session    bookshelf_api
     ...         /api/auth/register
@@ -305,12 +313,50 @@ Should Not Register Without Name
     ${body}=     Create Dictionary
     ...          email=${email}
     ...          password=Test123456!
+    ...          acceptTerms=${True}
     
     ${resp}=    POST On Session    bookshelf_api
     ...         /api/auth/register
     ...         json=${body}
     ...         expected_status=any
     
+    Response Status Should Be    ${resp}    400
+
+Should Not Register Without Accepting The Terms
+    [Documentation]    The API refuses a sign-up that does not accept the terms of service
+    [Tags]    negative    api    auth    register    terms    validation    ID=AUTH021
+
+    ${credentials}=    Generate Unique User Credentials
+    ${missing}=    Create Dictionary
+    ...         name=${credentials}[name]
+    ...         email=${credentials}[email]
+    ...         password=${credentials}[password]
+    ${declined}=    Create Dictionary
+    ...         name=${credentials}[name]
+    ...         email=${credentials}[email]
+    ...         password=${credentials}[password]
+    ...         acceptTerms=${False}
+
+    ${resp_missing}=    POST On Session    bookshelf_api    /api/auth/register    json=${missing}    expected_status=any
+    ${resp_declined}=   POST On Session    bookshelf_api    /api/auth/register    json=${declined}   expected_status=any
+
+    Response Status Should Be    ${resp_missing}    400
+    Response Status Should Be    ${resp_declined}    400
+
+Should Not Register With Password Longer Than 72 Bytes
+    [Documentation]    bcrypt ignores everything after 72 bytes, so the API refuses longer passwords
+    [Tags]    negative    api    auth    register    security    validation    ID=AUTH022
+
+    ${credentials}=    Generate Unique User Credentials
+    ${long_password}=    Evaluate    'a' * 73
+    ${body}=    Create Dictionary
+    ...         name=${credentials}[name]
+    ...         email=${credentials}[email]
+    ...         password=${long_password}
+    ...         acceptTerms=${True}
+
+    ${resp}=    POST On Session    bookshelf_api    /api/auth/register    json=${body}    expected_status=any
+
     Response Status Should Be    ${resp}    400
 
 Should Not Login Without Email
