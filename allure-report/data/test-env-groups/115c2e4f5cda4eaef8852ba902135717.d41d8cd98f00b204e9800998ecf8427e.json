@@ -1,1 +1,1 @@
-{"id":"115c2e4f5cda4eaef8852ba902135717.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Not Create Book Without Author","name":"Should Not Create Book Without Author","status":"failed","testResultsByEnv":{"default":"d2112083716a28f00fdfcedbbdda3ce3"}}
+{"id":"115c2e4f5cda4eaef8852ba902135717.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Not Create Book Without Author","name":"Should Not Create Book Without Author","status":"passed","testResultsByEnv":{"default":"44654513e8a5dba32d86f3ddb4e87b32"}}

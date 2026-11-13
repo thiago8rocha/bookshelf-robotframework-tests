@@ -1,1 +1,1 @@
-{"id":"ff7cbc0a295235afb066f393bc1bf941.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Not Create Book With Invalid Token","name":"Should Not Create Book With Invalid Token","status":"failed","testResultsByEnv":{"default":"ac78fc8687ebcba8454c446e21e0bc7e"}}
+{"id":"ff7cbc0a295235afb066f393bc1bf941.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Books Api.Should Not Create Book With Invalid Token","name":"Should Not Create Book With Invalid Token","status":"passed","testResultsByEnv":{"default":"6a1c9af8e0004f300f2808c62dd288d5"}}

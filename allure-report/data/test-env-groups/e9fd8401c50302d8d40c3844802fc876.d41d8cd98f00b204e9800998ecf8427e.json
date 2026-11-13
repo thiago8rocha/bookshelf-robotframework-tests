@@ -1,1 +1,1 @@
-{"id":"e9fd8401c50302d8d40c3844802fc876.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Should Login With Valid Credentials","name":"Should Login With Valid Credentials","status":"failed","testResultsByEnv":{"default":"99dd6b03b64edb942181ca8eeead9e82"}}
+{"id":"e9fd8401c50302d8d40c3844802fc876.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Should Login With Valid Credentials","name":"Should Login With Valid Credentials","status":"passed","testResultsByEnv":{"default":"2d5be74a628a532372503aa79ad849d9"}}
