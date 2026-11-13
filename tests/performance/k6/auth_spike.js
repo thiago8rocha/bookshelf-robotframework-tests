@@ -46,7 +46,7 @@ export default function () {
     const registerStart = Date.now();
     const registerRes = http.post(
         `${API_URL}/api/auth/register`,
-        JSON.stringify({ name: `Spike User ${timestamp}`, email, password }),
+        JSON.stringify({ name: `Spike User ${timestamp}`, email, password, acceptTerms: true }),
         { headers: { 'Content-Type': 'application/json' }, tags: { endpoint: 'register' } }
     );
     registerDuration.add(Date.now() - registerStart);

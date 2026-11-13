@@ -30,6 +30,7 @@ Ensure Default User Exists
     ...    name=Default UI Test User
     ...    email=${USER_EMAIL}
     ...    password=${USER_PASS}
+    ...    acceptTerms=${True}
     ${resp}=    POST On Session    ui_seed    /api/auth/register
     ...    json=${body}    expected_status=any
     Should Be True    ${resp.status_code} == 201

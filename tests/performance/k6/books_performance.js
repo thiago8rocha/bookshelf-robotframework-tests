@@ -34,6 +34,7 @@ export function setup() {
                 name: 'Perf Books User',
                 email: `perf_books_${Date.now()}_${attempt}@test.com`,
                 password: 'Test@123456',
+                acceptTerms: true,
             }),
             { headers: { 'Content-Type': 'application/json' } }
         );

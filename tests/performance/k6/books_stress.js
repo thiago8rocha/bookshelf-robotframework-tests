@@ -42,6 +42,7 @@ export function setup() {
             name: 'Stress Books User',
             email: `stress_books_${Date.now()}@test.com`,
             password: 'Test@123456',
+            acceptTerms: true,
         }),
         { headers: { 'Content-Type': 'application/json' } }
     );

@@ -40,6 +40,7 @@ export function setup() {
             name: 'Load Books User',
             email: `load_books_${Date.now()}@test.com`,
             password: 'Test@123456',
+            acceptTerms: true,
         }),
         { headers: { 'Content-Type': 'application/json' } }
     );
