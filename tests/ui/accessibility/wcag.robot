@@ -42,7 +42,7 @@ Register Page Should Be Accessible
     Should Be True    ${h1_count} >= 1
     
     ${h1_text}=    Get Text    css=h1
-    Should Contain    ${h1_text}    Criar Conta
+    Should Contain    ${h1_text}    Bem-vindo
 
 Dashboard Should Be Accessible
     [Documentation]    Valida acessibilidade do dashboard
