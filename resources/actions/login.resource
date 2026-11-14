@@ -75,33 +75,10 @@ Validate Login Error Message
     END
 
 Logout
-    [Documentation]    Faz logout do usuário
-    ${logout_exists}=    Run Keyword And Return Status
-    ...    Wait For Elements State    data-testid=logout-button    visible    timeout=2s
-    
-    IF    ${logout_exists}
-        Click    data-testid=logout-button
-        Wait For Elements State    data-testid=login-page    visible    timeout=10s
-    ELSE
-        Log    Logout button not found, trying menu logout
-        ${menu_exists}=    Run Keyword And Return Status
-        ...    Wait For Elements State    css=[aria-label="menu"]    visible    timeout=2s
-        IF    ${menu_exists}
-            Click    css=[aria-label="menu"]
-            Sleep    0.5s
-            Click    text=Logout
-            Wait For Elements State    data-testid=login-page    visible    timeout=10s
-        ELSE
-            ${sair_exists}=    Run Keyword And Return Status
-            ...    Wait For Elements State    text=Sair    visible    timeout=2s
-            IF    ${sair_exists}
-                Click    text=Sair
-                Wait For Elements State    data-testid=login-page    visible    timeout=10s
-            ELSE
-                Fail    Could not find logout mechanism - no logout button, menu or Sair link found
-            END
-        END
-    END
+    [Documentation]    Faz logout do usuário pelo menu do usuário
+    Click    data-testid=user-menu
+    Click    data-testid=logout-button
+    Wait For Elements State    data-testid=login-page    visible    timeout=10s
 
 User Should Be Logged In
     [Documentation]    Valida que usuário está logado
