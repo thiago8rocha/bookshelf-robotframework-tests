@@ -1,1 +1,1 @@
-{"id":"0584daa3e54385bb038f3b9921fc8efb.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Should Reject Token Without Bearer Prefix","name":"Should Reject Token Without Bearer Prefix","status":"passed","testResultsByEnv":{"default":"7f8d2a0bfa5c1862b72ae1e442f6c689"}}
+{"id":"0584daa3e54385bb038f3b9921fc8efb.d41d8cd98f00b204e9800998ecf8427e","fullName":"Tests.Api.Login Api.Should Reject Token Without Bearer Prefix","name":"Should Reject Token Without Bearer Prefix","status":"passed","testResultsByEnv":{"default":"b611cd3758d24a92f13888aaf36c7a74"}}
