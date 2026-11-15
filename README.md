@@ -265,7 +265,7 @@ No CI, o **Allure Report** é gerado automaticamente e publicado no GitHub Pages
 | `BSTAT` | UI: status e filtros de livros | BSTAT001–007 |
 | `DASH` | UI: dashboard e estatísticas | DASH001–007 |
 | `E2E` | Jornadas completas do usuário | E2E001–004 |
-| `LOGIN` | UI: fluxo de login | LOGIN001–007 |
+| `LOGIN` | UI: fluxo de login | LOGIN001–006 |
 | `LOGOUT` | UI: logout | LOGOUT001–004 |
 | `REGISTER` | UI: registro de usuário | REGISTER001–004 |
 | `SESSION` | UI: persistência de sessão | SESSION001–004 |
